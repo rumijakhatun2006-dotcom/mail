@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temp Mail - Disposable Temporary Email</title>
+<meta name="description" content="Free temporary email address. Protect your real inbox from spam.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; }
+  :root {
+    --bg-dark: #202123;
+    --bg-card: #2a2b2e;
+    --bg-hover: #3a3b3e;
+    --text-primary: #ececf1;
+    --text-secondary: #8e8ea0;
+    --accent: #10a37f;
+    --accent-hover: #1a7f64;
+    --border: #4a4b4e;
+    --blue: #3b82f6;
+    --yellow: #f59e0b;
+  }
+  body { background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
+  header { background: var(--bg-card); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border); }
+  .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .logo span { color: var(--accent); }
+  nav ul { list-style: none; display: flex; gap: 4px; flex-wrap: wrap; }
+  nav ul li a { color: var(--text-secondary); text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 14px; transition: 0.2s; }
+  nav ul li a:hover, nav ul li a.active { background: var(--bg-hover); color: var(--text-primary); }
+  .page { display: none; flex: 1; padding: 24px; }
+  .page.active { display: block; }
+  .container { max-width: 800px; margin: 0 auto; }
+  .hero { text-align: center; margin-bottom: 24px; }
+  .hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: var(--text-secondary); font-size: 15px; }
+  .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+  .label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600; }
+  .email-box { display: flex; gap: 10px; margin-bottom: 14px; }
+  .email-box input { flex: 1; padding: 16px; font-size: 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-weight: 600; text-align: center; outline: none; }
+  .email-box input:focus { border-color: var(--accent); }
+  .btn { padding: 14px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+  .btn:active { transform: scale(0.98); }
+  .btn-copy { background: var(--accent); color: #fff; flex: 1; }
+  .btn-copy:hover { background: var(--accent-hover); }
+  .btn-new { background: var(--yellow); color: #202123; }
+  .btn-new:hover { background: #d97706; }
+  .btn-refresh { background: var(--blue); color: #fff; }
+  .btn-refresh:hover { background: #2563eb; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .status { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 10px; min-height: 18px; }
+  .status.err { color: #ef4444; }
+  .status.ok { color: var(--accent); }
+  .inbox-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .inbox-header h2 { font-size: 16px; display: flex; align-items: center; gap: 8px; }
+  .badge { background: var(--accent); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 10px; }
+  .mail { display: flex; align-items: center; padding: 14px; background: var(--bg-dark); border-radius: 8px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+  .mail:hover { background: var(--bg-hover); border-color: var(--border); }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
+  .mail-info { flex: 1; overflow: hidden; }
+  .mail-info .from { font-weight: 600; font-size: 14px; }
+  .mail-info .subject { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mail-time { font-size: 12px; color: var(--text-secondary); margin-left: 10px; }
+  .empty { text-align: center; padding: 30px; color: var(--text-secondary); font-size: 14px; }
+  .content-card { background: var(--bg-card); border-radius: 12px; padding: 24px; border: 1px solid var(--border); max-width: 700px; margin: 0 auto; }
+  .content-card h2 { font-size: 20px; color: var(--text-primary); margin-bottom: 12px; }
+  .content-card h2:not(:first-child) { margin-top: 24px; }
+  .content-card p, .content-card li { color: var(--text-secondary); font-size: 14px; line-height: 1.7; }
+  .content-card ul { margin-left: 20px; }
+  footer { background: var(--bg-card); color: var(--text-secondary); text-align: center; padding: 20px; font-size: 13px; border-top: 1px solid var(--border); margin-top: auto; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 999; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.err { background: #ef4444; }
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 24px; }
+    .email-box { flex-direction: column; }
+    .btn-copy { width: 100%; }
+    header { padding: 12px 16px; }
+    nav ul li a { padding: 6px 10px; font-size: 13px; }
+    .page { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📧 Temp<span>Mail</span></div>
+  <nav>
+    <ul>
+      <li><a href="#" class="active" onclick="showPage('home'); return false;">Home</a></li>
+      <li><a href="#" onclick="showPage('about'); return false;">About</a></li>
+      <li><a href="#" onclick="showPage('contact'); return false;">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section id="home" class="page active">
+  <div class="container">
+    <div class="hero">
+      <h1>Temp<span>Mail</span></h1>
+      <p>Your Temporary Email Address</p>
+    </div>
+
+    <div class="card">
+      <div class="label">Your Temporary Email Address</div>
+      <div class="email-box">
+        <input type="text" id="emailAddress" readonly placeholder="Generating...">
+      </div>
+      <div class="row" style="margin-bottom: 10px;">
+        <button class="btn btn-copy" onclick="copyEmail()">📋 Copy</button>
+        <button class="btn btn-new" onclick="createInbox()">🔄 New Email</button>
+      </div>
+      <div class="status" id="status">Initializing...</div>
+    </div>
+
+    <div class="card">
+      <div class="inbox-header">
+        <h2>📥 Inbox <span class="badge" id="mailCount">0</span></h2>
+        <button class="btn btn-refresh" style="padding: 8px 16px; font-size: 13px;" onclick="fetchMessages()">🔁 Refresh</button>
+      </div>
+      <div id="mailList"><div class="empty">No messages yet...</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="page">
+  <div class="content-card">
+    <h2>About Temp Mail</h2>
+    <p>Temp Mail is a free disposable email service that lets you receive emails without revealing your real address.</p>
+    <h2>Why Use It?</h2>
+    <ul>
+      <li>Avoid spam and unwanted newsletters</li>
+      <li>Protect your personal identity online</li>
+      <li>No registration required</li>
+      <li>Emails auto-delete after 24 hours</li>
+    </ul>
+    <h2>How It Works</h2>
+    <p>Copy your temporary email address, use it wherever you need, and watch incoming messages appear instantly.</p>
+  </div>
+</section>
+
+<section id="contact" class="page">
+  <div class="content-card">
+    <h2>Contact Us</h2>
+    <p>Have a question or suggestion? Fill out the form below.</p>
+    <form onsubmit="event.preventDefault(); showToast('✅ Message sent!');">
+      <div style="margin-bottom: 14px;">
+        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:var(--text-primary);">Your Name</label>
+        <input type="text" style="width:100%; padding:12px; background:var(--bg-dark); border:1px solid var(--border); border-radius:6px; color:var(--text-primary);" required>
+      </div>
+      <div style="margin-bottom: 14px;">
+        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:var(--text-primary);">Your Email</label>
+        <input type="email" style="width:100%; padding:12px; background:var(--bg-dark); border:1px solid var(--border); border-radius:6px; color:var(--text-primary);" required>
+      </div>
+      <div style="margin-bottom: 14px;">
+        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:var(--text-primary);">Message</label>
+        <textarea rows="4" style="width:100%; padding:12px; background:var(--bg-dark); border:1px solid var(--border); border-radius:6px; color:var(--text-primary);" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-refresh" style="width:100%;">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 TempMail — Free Temporary Email Service
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ======================================================
+     TempMailPortal API — free, no key, CORS-enabled
+     ====================================================== */
+  const API = "https://api.tempmailportal.com";
+  let currentToken = null;
+  let currentAddress = null;
+  let pollTimer = null;
+
+  const $ = id => document.getElementById(id);
+
+  function showPage(p) {
+    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+    $(p).classList.add('active');
+    document.querySelectorAll('nav ul li a').forEach(a => a.classList.remove('active'));
+    event.target.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function showToast(msg, isErr) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (isErr ? ' err' : '');
+    setTimeout(() => t.className = 'toast', 2500);
+  }
+
+  function setStatus(msg, type) {
+    const s = $('status');
+    s.textContent = msg;
+    s.className = 'status' + (type ? ' ' + type : '');
+  }
+
+  function copyEmail() {
+    if (!currentAddress) return;
+    navigator.clipboard.writeText(currentAddress)
+      .then(() => showToast('✅ Copied!'))
+      .catch(() => showToast('❌ Copy failed', true));
+  }
+
+  async function createInbox() {
+    setStatus('Creating new inbox...', '');
+    $('emailAddress').value = 'Generating...';
+    $('mailList').innerHTML = '<div class="empty">Loading...</div>';
+    $('mailCount').textContent = '0';
+
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+
+    try {
+      const res = await fetch(`${API}/api/inbox`, { method: 'POST' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      const data = await res.json();
+      if (!data.address || !data.token) throw new Error('Invalid response');
+
+      currentAddress = data.address;
+      currentToken = data.token;
+
+      $('emailAddress').value = currentAddress;
+      setStatus('✅ Inbox ready. Waiting for emails...', 'ok');
+      $('mailList').innerHTML = '<div class="empty">No messages yet...</div>';
+      showToast('✅ New email created!');
+
+      fetchMessages();
+      pollTimer = setInterval(fetchMessages, 5000);
+    } catch (err) {
+      setStatus('❌ ' + err.message, 'err');
+      $('emailAddress').value = '';
+      $('mailList').innerHTML = '<div class="empty">Failed: ' + err.message + '</div>';
+      showToast('❌ ' + err.message, true);
+    }
+  }
+
+  async function fetchMessages() {
+    if (!currentToken) return;
+    try {
+      const res = await fetch(`${API}/api/messages`, {
+        headers: { Authorization: 'Bearer ' + currentToken }
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      const messages = await res.json();
+      if (!Array.isArray(messages) || messages.length === 0) {
+        if (!document.querySelector('.mail')) {
+          $('mailList').innerHTML = '<div class="empty">No messages yet...</div>';
+        }
+        $('mailCount').textContent = '0';
+        return;
+      }
+
+      $('mailCount').textContent = messages.length;
+      const list = $('mailList');
+      list.innerHTML = '';
+      messages.forEach(msg => {
+        const from = msg.from || 'Unknown';
+        const el = document.createElement('div');
+        el.className = 'mail';
+        el.innerHTML = `
+          <div class="avatar">${from.charAt(0).toUpperCase()}</div>
+          <div class="mail-info">
+            <div class="from">${from}</div>
+            <div class="subject">${msg.subject || '(no subject)'}</div>
+          </div>
+          <div class="mail-time">${new Date(msg.date).toLocaleTimeString()}</div>
+        `;
+        el.onclick = () => readMessage(msg.id);
+        list.appendChild(el);
+      });
+    } catch (err) {
+      console.error('Poll error:', err);
+    }
+  }
+
+  async function readMessage(id) {
+    if (!currentToken) return;
+    try {
+      const res = await fetch(`${API}/api/messages/${id}`, {
+        headers: { Authorization: 'Bearer ' + currentToken }
+      });
+      const msg = await res.json();
+      let body = msg.text || msg.html || 'No content';
+      const clean = body.replace(/<[^>]*>/g, '').substring(0, 800);
+      alert('From: ' + (msg.from || 'Unknown') + '\nSubject: ' + (msg.subject || '(no subject)') + '\n\n' + clean);
+    } catch (err) {
+      showToast('❌ Failed to read', true);
+    }
+  }
+
+  createInbox();
+</script>
+
+</body>
+</html>
