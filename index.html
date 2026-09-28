@@ -1,455 +1,702 @@
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Temp Mail - Disposable Temporary Email</title>
-<meta name="description" content="Free temporary email address. Protect your real inbox from spam.">
+
+<title>Temp Mail - Temporary Email</title>
+
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; }
-  :root {
-    --bg-dark: #202123;
-    --bg-card: #2a2b2e;
-    --bg-hover: #3a3b3e;
-    --text-primary: #ececf1;
-    --text-secondary: #8e8ea0;
-    --accent: #10a37f;
-    --accent-hover: #1a7f64;
-    --border: #4a4b4e;
-    --blue: #3b82f6;
-    --yellow: #f59e0b;
-    --red: #ef4444;
-  }
-  body { background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
-  header { background: var(--bg-card); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border); }
-  .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-  .logo span { color: var(--accent); }
-  nav ul { list-style: none; display: flex; gap: 4px; flex-wrap: wrap; }
-  nav ul li a { color: var(--text-secondary); text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 14px; transition: 0.2s; }
-  nav ul li a:hover, nav ul li a.active { background: var(--bg-hover); color: var(--text-primary); }
-  .page { display: none; flex: 1; padding: 24px; }
-  .page.active { display: block; }
-  .container { max-width: 800px; margin: 0 auto; }
-  .hero { text-align: center; margin-bottom: 24px; }
-  .hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
-  .hero h1 span { color: var(--accent); }
-  .hero p { color: var(--text-secondary); font-size: 15px; }
-  .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
-  .label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600; }
-  .email-box { display: flex; gap: 10px; margin-bottom: 14px; }
-  .email-box input { flex: 1; padding: 16px; font-size: 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-weight: 600; text-align: center; outline: none; }
-  .email-box input:focus { border-color: var(--accent); }
-  .btn { padding: 14px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap; }
-  .btn:active { transform: scale(0.98); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-copy { background: var(--accent); color: #fff; flex: 1; }
-  .btn-copy:hover:not(:disabled) { background: var(--accent-hover); }
-  .btn-new { background: var(--yellow); color: #202123; }
-  .btn-new:hover:not(:disabled) { background: #d97706; }
-  .btn-refresh { background: var(--blue); color: #fff; }
-  .btn-refresh:hover:not(:disabled) { background: #2563eb; }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .status { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 10px; min-height: 18px; }
-  .status.err { color: var(--red); }
-  .status.ok { color: var(--accent); }
-  .status.warn { color: var(--yellow); }
-  .inbox-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .inbox-header h2 { font-size: 16px; display: flex; align-items: center; gap: 8px; }
-  .badge { background: var(--accent); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 10px; }
-  .mail { display: flex; align-items: center; padding: 14px; background: var(--bg-dark); border-radius: 8px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
-  .mail:hover { background: var(--bg-hover); border-color: var(--border); }
-  .mail.active { border-color: var(--accent); background: var(--bg-hover); }
-  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
-  .mail-info { flex: 1; overflow: hidden; }
-  .mail-info .from { font-weight: 600; font-size: 14px; }
-  .mail-info .subject { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mail-time { font-size: 12px; color: var(--text-secondary); margin-left: 10px; }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
 
-  /* -------- Message Viewer (Inline) -------- */
-  .message-viewer { display: none; margin-top: 16px; padding: 20px; background: var(--bg-dark); border-radius: 8px; border: 1px solid var(--accent); animation: slideDown 0.3s ease; }
-  .message-viewer.show { display: block; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-  .message-viewer .mv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); gap: 12px; }
-  .message-viewer .mv-from { font-size: 15px; font-weight: 600; word-break: break-all; }
-  .message-viewer .mv-subject { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
-  .message-viewer .mv-close { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px; flex-shrink: 0; }
-  .message-viewer .mv-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
-  .message-viewer .mv-body { font-size: 14px; line-height: 1.7; color: var(--text-primary); white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto; }
+body{
+    background:#f4f7fb;
+    color:#202124;
+}
 
-  .empty { text-align: center; padding: 30px; color: var(--text-secondary); font-size: 14px; }
-  .content-card { background: var(--bg-card); border-radius: 12px; padding: 24px; border: 1px solid var(--border); max-width: 700px; margin: 0 auto; }
-  .content-card h2 { font-size: 20px; color: var(--text-primary); margin-bottom: 12px; }
-  .content-card h2:not(:first-child) { margin-top: 24px; }
-  .content-card p, .content-card li { color: var(--text-secondary); font-size: 14px; line-height: 1.7; }
-  .content-card ul { margin-left: 20px; }
-  footer { background: var(--bg-card); color: var(--text-secondary); text-align: center; padding: 20px; font-size: 13px; border-top: 1px solid var(--border); margin-top: auto; }
-  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 999; max-width: 90%; text-align: center; }
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .toast.err { background: var(--red); }
-  .toast.warn { background: var(--yellow); color: #202123; }
-  @media (max-width: 600px) {
-    .hero h1 { font-size: 24px; }
-    .email-box { flex-direction: column; }
-    .btn-copy { width: 100%; }
-    header { padding: 12px 16px; }
-    nav ul li a { padding: 6px 10px; font-size: 13px; }
-    .page { padding: 16px; }
-  }
+/* Header */
+header{
+    background:#ffffff;
+    border-bottom:1px solid #e5e7eb;
+    padding:16px 6%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:27px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#ff4757;
+}
+
+.header-btn{
+    background:#ff4757;
+    color:#fff;
+    border:0;
+    padding:11px 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* Main */
+.container{
+    max-width:1000px;
+    margin:50px auto;
+    padding:0 20px;
+}
+
+.hero{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.hero h1{
+    font-size:38px;
+    margin-bottom:12px;
+}
+
+.hero p{
+    color:#6b7280;
+    font-size:16px;
+}
+
+/* Main card */
+.card{
+    background:#fff;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 8px 30px rgba(0,0,0,.07);
+}
+
+/* Email */
+.email-area{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.email-input{
+    flex:1;
+    border:1px solid #d8dde5;
+    border-radius:9px;
+    padding:15px;
+    font-size:17px;
+    outline:none;
+    background:#fafafa;
+}
+
+.copy-btn{
+    border:0;
+    background:#111827;
+    color:white;
+    border-radius:9px;
+    padding:0 22px;
+    cursor:pointer;
+}
+
+/* Buttons */
+.actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.action-btn{
+    border:0;
+    padding:12px 20px;
+    border-radius:8px;
+    color:#fff;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.refresh{
+    background:#2563eb;
+}
+
+.change{
+    background:#f59e0b;
+}
+
+.delete{
+    background:#ef4444;
+}
+
+/* Inbox */
+.inbox{
+    margin-top:30px;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.inbox-title{
+    padding:18px;
+    background:#f8fafc;
+    border-bottom:1px solid #e5e7eb;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.empty{
+    padding:60px 20px;
+    text-align:center;
+    color:#777;
+}
+
+.empty-icon{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+.empty h3{
+    color:#333;
+    margin-bottom:7px;
+}
+
+/* Mail row */
+.mail{
+    display:flex;
+    justify-content:space-between;
+    padding:18px;
+    border-bottom:1px solid #eee;
+    cursor:pointer;
+}
+
+.mail:hover{
+    background:#f8fafc;
+}
+
+.mail-info strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.mail-info small{
+    color:#777;
+}
+
+.view-btn{
+    background:#2563eb;
+    color:white;
+    border:0;
+    padding:8px 14px;
+    border-radius:6px;
+}
+
+/* Info */
+.info{
+    background:#fff;
+    margin-top:30px;
+    padding:30px;
+    border-radius:14px;
+    line-height:1.7;
+}
+
+.info h2{
+    margin-bottom:12px;
+}
+
+/* Footer */
+footer{
+    margin-top:60px;
+    padding:30px;
+    text-align:center;
+    background:#111827;
+    color:#aaa;
+}
+
+/* Toast */
+.toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:#111827;
+    color:white;
+    padding:14px 20px;
+    border-radius:8px;
+    display:none;
+    z-index:100;
+}
+
+/* Modal */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:650px;
+    max-height:80vh;
+    overflow:auto;
+    border-radius:12px;
+    padding:25px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.close{
+    border:0;
+    background:#ef4444;
+    color:#fff;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    cursor:pointer;
+}
+
+.mail-body{
+    line-height:1.7;
+    color:#444;
+}
+
+/* Mobile */
+@media(max-width:650px){
+
+    .hero h1{
+        font-size:28px;
+    }
+
+    .email-area{
+        flex-direction:column;
+    }
+
+    .copy-btn{
+        padding:13px;
+    }
+
+    .card{
+        padding:20px;
+    }
+
+    .mail{
+        gap:15px;
+    }
+}
 </style>
 </head>
+
 <body>
 
+<!-- Header -->
 <header>
-  <div class="logo">📧 Temp<span>Mail</span></div>
-  <nav>
-    <ul>
-      <li><a href="#" class="active" onclick="showPage('home', event); return false;">Home</a></li>
-      <li><a href="#" onclick="showPage('about', event); return false;">About</a></li>
-      <li><a href="#" onclick="showPage('contact', event); return false;">Contact</a></li>
-    </ul>
-  </nav>
+
+    <div class="logo">
+        Temp<span>Mail</span>
+    </div>
+
+    <button class="header-btn" onclick="newMailbox()">
+        New Mailbox
+    </button>
+
 </header>
 
-<section id="home" class="page active">
-  <div class="container">
+
+<!-- Main -->
+<div class="container">
+
     <div class="hero">
-      <h1>Temp<span>Mail</span></h1>
-      <p>Your Temporary Email Address</p>
+
+        <h1>Temporary Email Address</h1>
+
+        <p>
+            Protect your real email address from spam and unwanted messages.
+        </p>
+
     </div>
 
-    <div class="card">
-      <div class="label">Your Temporary Email Address</div>
-      <div class="email-box">
-        <input type="text" id="emailAddress" readonly placeholder="Generating...">
-      </div>
-      <div class="row" style="margin-bottom: 10px;">
-        <button class="btn btn-copy" id="copyBtn" onclick="copyEmail()" disabled>📋 Copy</button>
-        <button class="btn btn-new" id="newBtn" onclick="createInbox()">🔄 New Email</button>
-      </div>
-      <div class="status" id="status">Initializing...</div>
-    </div>
 
     <div class="card">
-      <div class="inbox-header">
-        <h2>📥 Inbox <span class="badge" id="mailCount">0</span></h2>
-        <button class="btn btn-refresh" style="padding: 8px 16px; font-size: 13px;" onclick="fetchMessages()">🔁 Refresh</button>
-      </div>
-      <div id="mailList"><div class="empty">No messages yet...</div></div>
 
-      <!-- Inline Message Viewer -->
-      <div class="message-viewer" id="messageViewer">
-        <div class="mv-header">
-          <div>
-            <div class="mv-from" id="mvFrom">From</div>
-            <div class="mv-subject" id="mvSubject">Subject</div>
-          </div>
-          <button class="mv-close" onclick="closeMessage()">✕</button>
+        <!-- Email -->
+        <div class="email-area">
+
+            <input
+                id="email"
+                class="email-input"
+                type="text"
+                readonly
+            >
+
+            <button
+                class="copy-btn"
+                onclick="copyEmail()"
+            >
+                Copy
+            </button>
+
         </div>
-        <div class="mv-body" id="mvBody">Message body...</div>
-      </div>
+
+
+        <!-- Actions -->
+        <div class="actions">
+
+            <button
+                class="action-btn refresh"
+                onclick="refreshInbox()"
+            >
+                ↻ Refresh
+            </button>
+
+            <button
+                class="action-btn change"
+                onclick="newMailbox()"
+            >
+                Change
+            </button>
+
+            <button
+                class="action-btn delete"
+                onclick="deleteMailbox()"
+            >
+                Delete
+            </button>
+
+        </div>
+
+
+        <!-- Inbox -->
+        <div class="inbox">
+
+            <div class="inbox-title">
+                📥 Inbox
+            </div>
+
+            <div id="inboxContent">
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        ✉️
+                    </div>
+
+                    <h3>Your inbox is empty</h3>
+
+                    <p>
+                        Waiting for incoming emails...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
-  </div>
-</section>
 
-<section id="about" class="page">
-  <div class="content-card">
-    <h2>About Temp Mail</h2>
-    <p>Temp Mail is a free disposable email service that lets you receive emails without revealing your real address.</p>
-    <h2>Why Use It?</h2>
-    <ul>
-      <li>Avoid spam and unwanted newsletters</li>
-      <li>Protect your personal identity online</li>
-      <li>No registration required</li>
-      <li>Emails auto-delete after 24 hours</li>
-    </ul>
-    <h2>How It Works</h2>
-    <p>Copy your temporary email address, use it wherever you need, and watch incoming messages appear instantly.</p>
-  </div>
-</section>
 
-<section id="contact" class="page">
-  <div class="content-card">
-    <h2>Contact Us</h2>
-    <p>Have a question or suggestion? Fill out the form below.</p>
-    <form onsubmit="event.preventDefault(); showToast('✅ Message sent!'); this.reset();">
-      <div style="margin-bottom: 14px;">
-        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:var(--text-primary);">Your Name</label>
-        <input type="text" style="width:100%; padding:12px; background:var(--bg-dark); border:1px solid var(--border); border-radius:6px; color:var(--text-primary);" required>
-      </div>
-      <div style="margin-bottom: 14px;">
-        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:var(--text-primary);">Your Email</label>
-        <input type="email" style="width:100%; padding:12px; background:var(--bg-dark); border:1px solid var(--border); border-radius:6px; color:var(--text-primary);" required>
-      </div>
-      <div style="margin-bottom: 14px;">
-        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:var(--text-primary);">Message</label>
-        <textarea rows="4" style="width:100%; padding:12px; background:var(--bg-dark); border:1px solid var(--border); border-radius:6px; color:var(--text-primary);" required></textarea>
-      </div>
-      <button type="submit" class="btn btn-refresh" style="width:100%;">Send Message</button>
-    </form>
-  </div>
-</section>
+    <!-- Information -->
+    <div class="info">
 
+        <h2>What is Temporary Email?</h2>
+
+        <p>
+            Temporary email is a disposable email address that can be
+            used for short-term registrations and online services.
+            It helps keep your personal email address private and
+            reduces unwanted messages.
+        </p>
+
+        <br>
+
+        <p>
+            This page provides the frontend interface of a temporary
+            mailbox. A backend SMTP server is required to receive
+            real emails from the Internet.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- Footer -->
 <footer>
-  &copy; 2026 TempMail — Free Temporary Email Service
+
+    © 2026 TempMail · Privacy · Terms
+
 </footer>
 
-<div class="toast" id="toast"></div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+
+<!-- Email Modal -->
+<div id="modal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2 id="modalSubject">
+                Email
+            </h2>
+
+            <button
+                class="close"
+                onclick="closeMail()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="mail-body">
+
+            <p>
+                <strong>From:</strong>
+                <span id="modalFrom"></span>
+            </p>
+
+            <br>
+
+            <p id="modalBody"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <script>
-  /* ======================================================
-     আপনার Worker URL — mail.tm API প্রক্সি
-     ====================================================== */
-  const WORKER_URL = "https://tampmail.rumijakhatun2006.workers.dev";
-  const NEW_EMAIL_COOLDOWN = 30; // ৩০ সেকেন্ড কুলডাউন
 
-  let currentToken = null;
-  let currentAddress = null;
-  let pollTimer = null;
-  let cooldownTimer = null;
-  let cooldownLeft = 0;
+/* =========================
+   TEMP MAIL SYSTEM
+========================= */
 
-  const $ = id => document.getElementById(id);
+const domains = [
+    "tempmail.demo",
+    "mailbox.demo",
+    "temporary.demo"
+];
 
-  function showPage(p, event) {
-    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-    $(p).classList.add('active');
-    if (event && event.target) {
-      document.querySelectorAll('nav ul li a').forEach(a => a.classList.remove('active'));
-      event.target.classList.add('active');
-    }
-    window.scrollTo(0, 0);
-  }
 
-  function showToast(msg, type) {
-    const t = $('toast');
-    t.textContent = msg;
-    t.className = 'toast show' + (type ? ' ' + type : '');
-    setTimeout(() => t.className = 'toast', 3000);
-  }
+/* Generate random email */
 
-  function setStatus(msg, type) {
-    const s = $('status');
-    s.textContent = msg;
-    s.className = 'status' + (type ? ' ' + type : '');
-  }
+function generateEmail(){
 
-  function copyEmail() {
-    if (!currentAddress) return;
-    navigator.clipboard.writeText(currentAddress)
-      .then(() => showToast('✅ Copied to clipboard!'))
-      .catch(() => {
-        const tmp = document.createElement('input');
-        tmp.value = currentAddress;
-        document.body.appendChild(tmp);
-        tmp.select();
-        document.execCommand('copy');
-        document.body.removeChild(tmp);
-        showToast('✅ Copied!');
-      });
-  }
+    const chars =
+        "abcdefghijklmnopqrstuvwxyz0123456789";
 
-  /* ======================================================
-     COOLDOWN — ৩০ সেকেন্ড টাইমার
-     ====================================================== */
-  function startCooldown() {
-    cooldownLeft = NEW_EMAIL_COOLDOWN;
-    $('newBtn').disabled = true;
+    let name = "";
 
-    if (cooldownTimer) clearInterval(cooldownTimer);
-    cooldownTimer = setInterval(() => {
-      cooldownLeft--;
-      if (cooldownLeft <= 0) {
-        clearInterval(cooldownTimer);
-        cooldownTimer = null;
-        $('newBtn').disabled = false;
-        $('newBtn').textContent = '🔄 New Email';
-        setStatus('✅ Ready for new email', 'ok');
-      } else {
-        $('newBtn').textContent = `⏳ Wait ${cooldownLeft}s`;
-      }
-    }, 1000);
-  }
+    for(let i = 0; i < 10; i++){
 
-  /* ======================================================
-     CREATE INBOX
-     ====================================================== */
-  async function createInbox() {
-    // যদি কুলডাউন চলছে, ব্লক
-    if (cooldownLeft > 0) {
-      showToast(`⏳ Please wait ${cooldownLeft}s`, 'warn');
-      return;
+        name += chars[
+            Math.floor(Math.random() * chars.length)
+        ];
+
     }
 
-    setStatus('Creating new inbox...', '');
-    $('emailAddress').value = 'Generating...';
-    $('mailList').innerHTML = '<div class="empty">Loading...</div>';
-    $('mailCount').textContent = '0';
-    $('copyBtn').disabled = true;
-    closeMessage();
+    const domain =
+        domains[
+            Math.floor(Math.random() * domains.length)
+        ];
 
-    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
-    currentToken = null;
-    currentAddress = null;
+    return name + "@" + domain;
+}
 
-    try {
-      // Step 1: Get domains
-      console.log('STEP 1: GET /domains');
-      const domRes = await fetch(`${WORKER_URL}/domains`);
-      if (!domRes.ok) throw new Error(`Domains HTTP ${domRes.status}`);
-      const domData = await domRes.json();
-      const domains = domData['hydra:member'] || domData;
-      if (!Array.isArray(domains) || domains.length === 0) throw new Error('No domains available');
-      const domain = domains[0].domain;
 
-      // Step 2: Create account
-      const user = Math.random().toString(36).substring(2, 12);
-      currentAddress = `${user}@${domain}`;
-      const password = Math.random().toString(36).substring(2, 15);
+/* Set initial email */
 
-      console.log('STEP 2: POST /accounts');
-      const accRes = await fetch(`${WORKER_URL}/accounts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: currentAddress, password })
-      });
-      const accText = await accRes.text();
-      let accData;
-      try { accData = JSON.parse(accText); } catch (e) {
-        throw new Error('Account creation failed: ' + accText.substring(0, 80));
-      }
-      if (!accData.id) {
-        throw new Error(accData.message || accData['hydra:description'] || 'Account creation failed');
-      }
+function setEmail(){
 
-      // Step 3: Login
-      console.log('STEP 3: POST /token');
-      const tokRes = await fetch(`${WORKER_URL}/token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: currentAddress, password })
-      });
-      const tokText = await tokRes.text();
-      let tokData;
-      try { tokData = JSON.parse(tokText); } catch (e) {
-        throw new Error('Token failed: ' + tokText.substring(0, 80));
-      }
-      if (!tokData.token) {
-        throw new Error(tokData.message || 'Login failed');
-      }
+    document.getElementById("email").value =
+        generateEmail();
 
-      currentToken = tokData.token;
+}
 
-      // Success
-      $('emailAddress').value = currentAddress;
-      $('copyBtn').disabled = false;
-      setStatus('✅ Inbox ready. Waiting for emails...', 'ok');
-      $('mailList').innerHTML = '<div class="empty">No messages yet...</div>';
-      showToast('✅ New email created!');
-      startCooldown();
 
-      fetchMessages();
-      pollTimer = setInterval(fetchMessages, 5000);
+/* Copy */
 
-    } catch (err) {
-      console.error('❌ ERROR:', err);
-      setStatus('❌ ' + err.message, 'err');
-      $('emailAddress').value = '';
-      $('mailList').innerHTML = '<div class="empty">Failed: ' + err.message + '</div>';
-      showToast('❌ ' + err.message, 'err');
-      startCooldown();
-    }
-  }
+function copyEmail(){
 
-  /* ======================================================
-     FETCH MESSAGES
-     ====================================================== */
-  async function fetchMessages() {
-    if (!currentToken) return;
-    try {
-      const res = await fetch(`${WORKER_URL}/messages`, {
-        headers: { Authorization: `Bearer ${currentToken}` }
-      });
-      if (!res.ok) throw new Error(`Messages HTTP ${res.status}`);
+    const input =
+        document.getElementById("email");
 
-      const data = await res.json();
-      const messages = data['hydra:member'] || data;
+    navigator.clipboard.writeText(
+        input.value
+    ).then(() => {
 
-      if (!Array.isArray(messages) || messages.length === 0) {
-        if (!document.querySelector('.mail')) {
-          $('mailList').innerHTML = '<div class="empty">No messages yet...</div>';
-        }
-        $('mailCount').textContent = '0';
-        return;
-      }
+        showToast("Email copied!");
 
-      $('mailCount').textContent = messages.length;
-      const list = $('mailList');
-      list.innerHTML = '';
-      messages.forEach(msg => {
-        const from = msg.from ? msg.from.address : 'Unknown';
-        const el = document.createElement('div');
-        el.className = 'mail';
-        el.dataset.id = msg.id;
-        el.innerHTML = `
-          <div class="avatar">${from.charAt(0).toUpperCase()}</div>
-          <div class="mail-info">
-            <div class="from">${from}</div>
-            <div class="subject">${msg.subject || '(no subject)'}</div>
-          </div>
-          <div class="mail-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>
-        `;
-        el.onclick = () => readMessage(msg.id, el);
-        list.appendChild(el);
-      });
-    } catch (err) {
-      console.error('Poll error:', err);
-    }
-  }
+    });
 
-  /* ======================================================
-     READ MESSAGE — Inline Viewer
-     ====================================================== */
-  async function readMessage(id, el) {
-    if (!currentToken) return;
+}
 
-    // Active state
-    document.querySelectorAll('.mail').forEach(m => m.classList.remove('active'));
-    if (el) el.classList.add('active');
 
-    try {
-      const res = await fetch(`${WORKER_URL}/messages/${id}`, {
-        headers: { Authorization: `Bearer ${currentToken}` }
-      });
-      const msg = await res.json();
-      let body = '';
-      if (Array.isArray(msg.text)) body = msg.text.join('\n');
-      else body = msg.text || msg.html || 'No content';
-      const clean = body.replace(/<[^>]*>/g, '').trim() || '(empty message)';
+/* New mailbox */
 
-      $('mvFrom').textContent = 'From: ' + (msg.from?.address || 'Unknown');
-      $('mvSubject').textContent = 'Subject: ' + (msg.subject || '(no subject)');
-      $('mvBody').textContent = clean;
+function newMailbox(){
 
-      const viewer = $('messageViewer');
-      viewer.classList.add('show');
-      // Scroll into view
-      setTimeout(() => viewer.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    setEmail();
 
-    } catch (err) {
-      showToast('❌ Failed to read message', 'err');
-    }
-  }
+    clearInbox();
 
-  function closeMessage() {
-    $('messageViewer').classList.remove('show');
-    document.querySelectorAll('.mail').forEach(m => m.classList.remove('active'));
-  }
+    showToast(
+        "New temporary email created!"
+    );
 
-  /* ======================================================
-     INIT
-     ====================================================== */
-  createInbox();
+}
+
+
+/* Delete mailbox */
+
+function deleteMailbox(){
+
+    const result =
+        confirm(
+            "Are you sure you want to delete this mailbox?"
+        );
+
+    if(!result) return;
+
+    setEmail();
+
+    clearInbox();
+
+    showToast(
+        "Mailbox deleted."
+    );
+
+}
+
+
+/* Refresh */
+
+function refreshInbox(){
+
+    showToast(
+        "Inbox refreshed."
+    );
+
+    /*
+        Real project example:
+
+        fetch("/api/inbox")
+        .then(response => response.json())
+        .then(data => {
+            ...
+        });
+    */
+
+}
+
+
+/* Empty inbox */
+
+function clearInbox(){
+
+    document.getElementById(
+        "inboxContent"
+    ).innerHTML = `
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                ✉️
+            </div>
+
+            <h3>Your inbox is empty</h3>
+
+            <p>
+                Waiting for incoming emails...
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* Toast */
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.innerText = message;
+
+    toast.style.display = "block";
+
+    setTimeout(() => {
+
+        toast.style.display = "none";
+
+    }, 2500);
+
+}
+
+
+/* Open sample email */
+
+function openMail(){
+
+    document.getElementById(
+        "modalSubject"
+    ).innerText =
+        "Welcome to TempMail";
+
+    document.getElementById(
+        "modalFrom"
+    ).innerText =
+        "example@example.com";
+
+    document.getElementById(
+        "modalBody"
+    ).innerText =
+        "This is a sample email. Connect this frontend to your backend SMTP server to display real incoming emails.";
+
+    document.getElementById(
+        "modal"
+    ).style.display = "flex";
+
+}
+
+
+/* Close mail */
+
+function closeMail(){
+
+    document.getElementById(
+        "modal"
+    ).style.display = "none";
+
+}
+
+
+/* Start */
+
+setEmail();
+
 </script>
 
 </body>
 </html>
+```
