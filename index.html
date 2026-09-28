@@ -40,12 +40,13 @@
   .email-box input:focus { border-color: var(--accent); }
   .btn { padding: 14px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap; }
   .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-copy { background: var(--accent); color: #fff; flex: 1; }
-  .btn-copy:hover { background: var(--accent-hover); }
+  .btn-copy:hover:not(:disabled) { background: var(--accent-hover); }
   .btn-new { background: var(--yellow); color: #202123; }
-  .btn-new:hover { background: #d97706; }
+  .btn-new:hover:not(:disabled) { background: #d97706; }
   .btn-refresh { background: var(--blue); color: #fff; }
-  .btn-refresh:hover { background: #2563eb; }
+  .btn-refresh:hover:not(:disabled) { background: #2563eb; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; }
   .status { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 10px; min-height: 18px; }
   .status.err { color: #ef4444; }
@@ -67,7 +68,7 @@
   .content-card p, .content-card li { color: var(--text-secondary); font-size: 14px; line-height: 1.7; }
   .content-card ul { margin-left: 20px; }
   footer { background: var(--bg-card); color: var(--text-secondary); text-align: center; padding: 20px; font-size: 13px; border-top: 1px solid var(--border); margin-top: auto; }
-  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 999; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 999; max-width: 90%; text-align: center; }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   .toast.err { background: #ef4444; }
   @media (max-width: 600px) {
@@ -86,9 +87,9 @@
   <div class="logo">📧 Temp<span>Mail</span></div>
   <nav>
     <ul>
-      <li><a href="#" class="active" onclick="showPage('home'); return false;">Home</a></li>
-      <li><a href="#" onclick="showPage('about'); return false;">About</a></li>
-      <li><a href="#" onclick="showPage('contact'); return false;">Contact</a></li>
+      <li><a href="#" class="active" onclick="showPage('home', event); return false;">Home</a></li>
+      <li><a href="#" onclick="showPage('about', event); return false;">About</a></li>
+      <li><a href="#" onclick="showPage('contact', event); return false;">Contact</a></li>
     </ul>
   </nav>
 </header>
@@ -106,8 +107,8 @@
         <input type="text" id="emailAddress" readonly placeholder="Generating...">
       </div>
       <div class="row" style="margin-bottom: 10px;">
-        <button class="btn btn-copy" onclick="copyEmail()">📋 Copy</button>
-        <button class="btn btn-new" onclick="createInbox()">🔄 New Email</button>
+        <button class="btn btn-copy" id="copyBtn" onclick="copyEmail()" disabled>📋 Copy</button>
+        <button class="btn btn-new" id="newBtn" onclick="createInbox()">🔄 New Email</button>
       </div>
       <div class="status" id="status">Initializing...</div>
     </div>
@@ -142,7 +143,7 @@
   <div class="content-card">
     <h2>Contact Us</h2>
     <p>Have a question or suggestion? Fill out the form below.</p>
-    <form onsubmit="event.preventDefault(); showToast('✅ Message sent!');">
+    <form onsubmit="event.preventDefault(); showToast('✅ Message sent!'); this.reset();">
       <div style="margin-bottom: 14px;">
         <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:var(--text-primary);">Your Name</label>
         <input type="text" style="width:100%; padding:12px; background:var(--bg-dark); border:1px solid var(--border); border-radius:6px; color:var(--text-primary);" required>
@@ -168,20 +169,23 @@
 
 <script>
   /* ======================================================
-     TempMailPortal API — free, no key, CORS-enabled
+     আপনার Worker URL — mail.tm API প্রক্সি
      ====================================================== */
-  const API = "https://api.tempmailportal.com";
+  const WORKER_URL = "https://tampmail.rumijakhatun2006.workers.dev";
+
   let currentToken = null;
   let currentAddress = null;
   let pollTimer = null;
 
   const $ = id => document.getElementById(id);
 
-  function showPage(p) {
+  function showPage(p, event) {
     document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
     $(p).classList.add('active');
-    document.querySelectorAll('nav ul li a').forEach(a => a.classList.remove('active'));
-    event.target.classList.add('active');
+    if (event && event.target) {
+      document.querySelectorAll('nav ul li a').forEach(a => a.classList.remove('active'));
+      event.target.classList.add('active');
+    }
     window.scrollTo(0, 0);
   }
 
@@ -189,7 +193,7 @@
     const t = $('toast');
     t.textContent = msg;
     t.className = 'toast show' + (isErr ? ' err' : '');
-    setTimeout(() => t.className = 'toast', 2500);
+    setTimeout(() => t.className = 'toast', 3000);
   }
 
   function setStatus(msg, type) {
@@ -201,52 +205,131 @@
   function copyEmail() {
     if (!currentAddress) return;
     navigator.clipboard.writeText(currentAddress)
-      .then(() => showToast('✅ Copied!'))
-      .catch(() => showToast('❌ Copy failed', true));
+      .then(() => showToast('✅ Copied to clipboard!'))
+      .catch(() => {
+        // Fallback
+        const tmp = document.createElement('input');
+        tmp.value = currentAddress;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+        showToast('✅ Copied!');
+      });
   }
 
+  /* ======================================================
+     CREATE INBOX — mail.tm API (Worker প্রক্সির মাধ্যমে)
+     ====================================================== */
   async function createInbox() {
     setStatus('Creating new inbox...', '');
     $('emailAddress').value = 'Generating...';
     $('mailList').innerHTML = '<div class="empty">Loading...</div>';
     $('mailCount').textContent = '0';
+    $('copyBtn').disabled = true;
+    $('newBtn').disabled = true;
 
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    currentToken = null;
+    currentAddress = null;
 
     try {
-      const res = await fetch(`${API}/api/inbox`, { method: 'POST' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      // ---- Step 1: Get domains ----
+      console.log('STEP 1: GET /domains');
+      const domRes = await fetch(`${WORKER_URL}/domains`);
+      if (!domRes.ok) throw new Error(`Domains HTTP ${domRes.status}`);
+      const domData = await domRes.json();
+      console.log('Domains:', domData);
 
-      const data = await res.json();
-      if (!data.address || !data.token) throw new Error('Invalid response');
+      const domains = domData['hydra:member'] || domData;
+      if (!Array.isArray(domains) || domains.length === 0) {
+        throw new Error('No domains available');
+      }
+      const domain = domains[0].domain;
+      console.log('Using domain:', domain);
 
-      currentAddress = data.address;
-      currentToken = data.token;
+      // ---- Step 2: Create random address ----
+      const user = Math.random().toString(36).substring(2, 12);
+      currentAddress = `${user}@${domain}`;
+      const password = Math.random().toString(36).substring(2, 15);
+      console.log('Creating account:', currentAddress);
 
+      // ---- Step 3: Create account ----
+      console.log('STEP 2: POST /accounts');
+      const accRes = await fetch(`${WORKER_URL}/accounts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: currentAddress, password })
+      });
+      const accText = await accRes.text();
+      console.log('Account response:', accText);
+
+      let accData;
+      try { accData = JSON.parse(accText); } catch (e) {
+        throw new Error('Account creation returned invalid JSON');
+      }
+      if (!accData.id) {
+        throw new Error(accData.message || accData['hydra:description'] || 'Account creation failed');
+      }
+
+      // ---- Step 4: Login for token ----
+      console.log('STEP 3: POST /token');
+      const tokRes = await fetch(`${WORKER_URL}/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: currentAddress, password })
+      });
+      const tokText = await tokRes.text();
+      console.log('Token response:', tokText);
+
+      let tokData;
+      try { tokData = JSON.parse(tokText); } catch (e) {
+        throw new Error('Token endpoint returned invalid JSON');
+      }
+      if (!tokData.token) {
+        throw new Error(tokData.message || tokData['hydra:description'] || 'Login failed');
+      }
+
+      currentToken = tokData.token;
+
+      // ---- SUCCESS ----
       $('emailAddress').value = currentAddress;
+      $('copyBtn').disabled = false;
       setStatus('✅ Inbox ready. Waiting for emails...', 'ok');
       $('mailList').innerHTML = '<div class="empty">No messages yet...</div>';
       showToast('✅ New email created!');
+      console.log('✅ INBOX READY:', currentAddress);
 
+      // ---- Start polling ----
       fetchMessages();
       pollTimer = setInterval(fetchMessages, 5000);
+
     } catch (err) {
+      console.error('❌ ERROR:', err);
       setStatus('❌ ' + err.message, 'err');
       $('emailAddress').value = '';
       $('mailList').innerHTML = '<div class="empty">Failed: ' + err.message + '</div>';
       showToast('❌ ' + err.message, true);
+    } finally {
+      $('newBtn').disabled = false;
     }
   }
 
+  /* ======================================================
+     FETCH MESSAGES
+     ====================================================== */
   async function fetchMessages() {
     if (!currentToken) return;
     try {
-      const res = await fetch(`${API}/api/messages`, {
-        headers: { Authorization: 'Bearer ' + currentToken }
+      const res = await fetch(`${WORKER_URL}/messages`, {
+        headers: { Authorization: `Bearer ${currentToken}` }
       });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      if (!res.ok) throw new Error(`Messages HTTP ${res.status}`);
 
-      const messages = await res.json();
+      const data = await res.json();
+      const messages = data['hydra:member'] || data;
+      console.log('Messages:', messages);
+
       if (!Array.isArray(messages) || messages.length === 0) {
         if (!document.querySelector('.mail')) {
           $('mailList').innerHTML = '<div class="empty">No messages yet...</div>';
@@ -259,7 +342,7 @@
       const list = $('mailList');
       list.innerHTML = '';
       messages.forEach(msg => {
-        const from = msg.from || 'Unknown';
+        const from = msg.from ? msg.from.address : 'Unknown';
         const el = document.createElement('div');
         el.className = 'mail';
         el.innerHTML = `
@@ -268,7 +351,7 @@
             <div class="from">${from}</div>
             <div class="subject">${msg.subject || '(no subject)'}</div>
           </div>
-          <div class="mail-time">${new Date(msg.date).toLocaleTimeString()}</div>
+          <div class="mail-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>
         `;
         el.onclick = () => readMessage(msg.id);
         list.appendChild(el);
@@ -278,21 +361,29 @@
     }
   }
 
+  /* ======================================================
+     READ MESSAGE
+     ====================================================== */
   async function readMessage(id) {
     if (!currentToken) return;
     try {
-      const res = await fetch(`${API}/api/messages/${id}`, {
-        headers: { Authorization: 'Bearer ' + currentToken }
+      const res = await fetch(`${WORKER_URL}/messages/${id}`, {
+        headers: { Authorization: `Bearer ${currentToken}` }
       });
       const msg = await res.json();
-      let body = msg.text || msg.html || 'No content';
-      const clean = body.replace(/<[^>]*>/g, '').substring(0, 800);
-      alert('From: ' + (msg.from || 'Unknown') + '\nSubject: ' + (msg.subject || '(no subject)') + '\n\n' + clean);
+      let body = '';
+      if (Array.isArray(msg.text)) body = msg.text.join('\n');
+      else body = msg.text || msg.html || 'No content';
+      const clean = body.replace(/<[^>]*>/g, '').substring(0, 1000);
+      alert('From: ' + (msg.from?.address || 'Unknown') + '\nSubject: ' + (msg.subject || '(no subject)') + '\n\n' + clean);
     } catch (err) {
-      showToast('❌ Failed to read', true);
+      showToast('❌ Failed to read message', true);
     }
   }
 
+  /* ======================================================
+     INIT
+     ====================================================== */
   createInbox();
 </script>
 
