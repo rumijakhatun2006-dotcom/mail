@@ -18,6 +18,7 @@
     --border: #4a4b4e;
     --blue: #3b82f6;
     --yellow: #f59e0b;
+    --red: #ef4444;
   }
   body { background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
   header { background: var(--bg-card); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border); }
@@ -49,18 +50,32 @@
   .btn-refresh:hover:not(:disabled) { background: #2563eb; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; }
   .status { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 10px; min-height: 18px; }
-  .status.err { color: #ef4444; }
+  .status.err { color: var(--red); }
   .status.ok { color: var(--accent); }
+  .status.warn { color: var(--yellow); }
   .inbox-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .inbox-header h2 { font-size: 16px; display: flex; align-items: center; gap: 8px; }
   .badge { background: var(--accent); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 10px; }
   .mail { display: flex; align-items: center; padding: 14px; background: var(--bg-dark); border-radius: 8px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
   .mail:hover { background: var(--bg-hover); border-color: var(--border); }
+  .mail.active { border-color: var(--accent); background: var(--bg-hover); }
   .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
   .mail-info { flex: 1; overflow: hidden; }
   .mail-info .from { font-weight: 600; font-size: 14px; }
   .mail-info .subject { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mail-time { font-size: 12px; color: var(--text-secondary); margin-left: 10px; }
+
+  /* -------- Message Viewer (Inline) -------- */
+  .message-viewer { display: none; margin-top: 16px; padding: 20px; background: var(--bg-dark); border-radius: 8px; border: 1px solid var(--accent); animation: slideDown 0.3s ease; }
+  .message-viewer.show { display: block; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .message-viewer .mv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); gap: 12px; }
+  .message-viewer .mv-from { font-size: 15px; font-weight: 600; word-break: break-all; }
+  .message-viewer .mv-subject { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  .message-viewer .mv-close { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px; flex-shrink: 0; }
+  .message-viewer .mv-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
+  .message-viewer .mv-body { font-size: 14px; line-height: 1.7; color: var(--text-primary); white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto; }
+
   .empty { text-align: center; padding: 30px; color: var(--text-secondary); font-size: 14px; }
   .content-card { background: var(--bg-card); border-radius: 12px; padding: 24px; border: 1px solid var(--border); max-width: 700px; margin: 0 auto; }
   .content-card h2 { font-size: 20px; color: var(--text-primary); margin-bottom: 12px; }
@@ -70,7 +85,8 @@
   footer { background: var(--bg-card); color: var(--text-secondary); text-align: center; padding: 20px; font-size: 13px; border-top: 1px solid var(--border); margin-top: auto; }
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 999; max-width: 90%; text-align: center; }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .toast.err { background: #ef4444; }
+  .toast.err { background: var(--red); }
+  .toast.warn { background: var(--yellow); color: #202123; }
   @media (max-width: 600px) {
     .hero h1 { font-size: 24px; }
     .email-box { flex-direction: column; }
@@ -119,6 +135,18 @@
         <button class="btn btn-refresh" style="padding: 8px 16px; font-size: 13px;" onclick="fetchMessages()">🔁 Refresh</button>
       </div>
       <div id="mailList"><div class="empty">No messages yet...</div></div>
+
+      <!-- Inline Message Viewer -->
+      <div class="message-viewer" id="messageViewer">
+        <div class="mv-header">
+          <div>
+            <div class="mv-from" id="mvFrom">From</div>
+            <div class="mv-subject" id="mvSubject">Subject</div>
+          </div>
+          <button class="mv-close" onclick="closeMessage()">✕</button>
+        </div>
+        <div class="mv-body" id="mvBody">Message body...</div>
+      </div>
     </div>
   </div>
 </section>
@@ -172,10 +200,13 @@
      আপনার Worker URL — mail.tm API প্রক্সি
      ====================================================== */
   const WORKER_URL = "https://tampmail.rumijakhatun2006.workers.dev";
+  const NEW_EMAIL_COOLDOWN = 30; // ৩০ সেকেন্ড কুলডাউন
 
   let currentToken = null;
   let currentAddress = null;
   let pollTimer = null;
+  let cooldownTimer = null;
+  let cooldownLeft = 0;
 
   const $ = id => document.getElementById(id);
 
@@ -189,10 +220,10 @@
     window.scrollTo(0, 0);
   }
 
-  function showToast(msg, isErr) {
+  function showToast(msg, type) {
     const t = $('toast');
     t.textContent = msg;
-    t.className = 'toast show' + (isErr ? ' err' : '');
+    t.className = 'toast show' + (type ? ' ' + type : '');
     setTimeout(() => t.className = 'toast', 3000);
   }
 
@@ -207,7 +238,6 @@
     navigator.clipboard.writeText(currentAddress)
       .then(() => showToast('✅ Copied to clipboard!'))
       .catch(() => {
-        // Fallback
         const tmp = document.createElement('input');
         tmp.value = currentAddress;
         document.body.appendChild(tmp);
@@ -219,42 +249,63 @@
   }
 
   /* ======================================================
-     CREATE INBOX — mail.tm API (Worker প্রক্সির মাধ্যমে)
+     COOLDOWN — ৩০ সেকেন্ড টাইমার
+     ====================================================== */
+  function startCooldown() {
+    cooldownLeft = NEW_EMAIL_COOLDOWN;
+    $('newBtn').disabled = true;
+
+    if (cooldownTimer) clearInterval(cooldownTimer);
+    cooldownTimer = setInterval(() => {
+      cooldownLeft--;
+      if (cooldownLeft <= 0) {
+        clearInterval(cooldownTimer);
+        cooldownTimer = null;
+        $('newBtn').disabled = false;
+        $('newBtn').textContent = '🔄 New Email';
+        setStatus('✅ Ready for new email', 'ok');
+      } else {
+        $('newBtn').textContent = `⏳ Wait ${cooldownLeft}s`;
+      }
+    }, 1000);
+  }
+
+  /* ======================================================
+     CREATE INBOX
      ====================================================== */
   async function createInbox() {
+    // যদি কুলডাউন চলছে, ব্লক
+    if (cooldownLeft > 0) {
+      showToast(`⏳ Please wait ${cooldownLeft}s`, 'warn');
+      return;
+    }
+
     setStatus('Creating new inbox...', '');
     $('emailAddress').value = 'Generating...';
     $('mailList').innerHTML = '<div class="empty">Loading...</div>';
     $('mailCount').textContent = '0';
     $('copyBtn').disabled = true;
-    $('newBtn').disabled = true;
+    closeMessage();
 
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
     currentToken = null;
     currentAddress = null;
 
     try {
-      // ---- Step 1: Get domains ----
+      // Step 1: Get domains
       console.log('STEP 1: GET /domains');
       const domRes = await fetch(`${WORKER_URL}/domains`);
       if (!domRes.ok) throw new Error(`Domains HTTP ${domRes.status}`);
       const domData = await domRes.json();
-      console.log('Domains:', domData);
-
       const domains = domData['hydra:member'] || domData;
-      if (!Array.isArray(domains) || domains.length === 0) {
-        throw new Error('No domains available');
-      }
+      if (!Array.isArray(domains) || domains.length === 0) throw new Error('No domains available');
       const domain = domains[0].domain;
-      console.log('Using domain:', domain);
 
-      // ---- Step 2: Create random address ----
+      // Step 2: Create account
       const user = Math.random().toString(36).substring(2, 12);
       currentAddress = `${user}@${domain}`;
       const password = Math.random().toString(36).substring(2, 15);
-      console.log('Creating account:', currentAddress);
 
-      // ---- Step 3: Create account ----
       console.log('STEP 2: POST /accounts');
       const accRes = await fetch(`${WORKER_URL}/accounts`, {
         method: 'POST',
@@ -262,17 +313,15 @@
         body: JSON.stringify({ address: currentAddress, password })
       });
       const accText = await accRes.text();
-      console.log('Account response:', accText);
-
       let accData;
       try { accData = JSON.parse(accText); } catch (e) {
-        throw new Error('Account creation returned invalid JSON');
+        throw new Error('Account creation failed: ' + accText.substring(0, 80));
       }
       if (!accData.id) {
         throw new Error(accData.message || accData['hydra:description'] || 'Account creation failed');
       }
 
-      // ---- Step 4: Login for token ----
+      // Step 3: Login
       console.log('STEP 3: POST /token');
       const tokRes = await fetch(`${WORKER_URL}/token`, {
         method: 'POST',
@@ -280,27 +329,24 @@
         body: JSON.stringify({ address: currentAddress, password })
       });
       const tokText = await tokRes.text();
-      console.log('Token response:', tokText);
-
       let tokData;
       try { tokData = JSON.parse(tokText); } catch (e) {
-        throw new Error('Token endpoint returned invalid JSON');
+        throw new Error('Token failed: ' + tokText.substring(0, 80));
       }
       if (!tokData.token) {
-        throw new Error(tokData.message || tokData['hydra:description'] || 'Login failed');
+        throw new Error(tokData.message || 'Login failed');
       }
 
       currentToken = tokData.token;
 
-      // ---- SUCCESS ----
+      // Success
       $('emailAddress').value = currentAddress;
       $('copyBtn').disabled = false;
       setStatus('✅ Inbox ready. Waiting for emails...', 'ok');
       $('mailList').innerHTML = '<div class="empty">No messages yet...</div>';
       showToast('✅ New email created!');
-      console.log('✅ INBOX READY:', currentAddress);
+      startCooldown();
 
-      // ---- Start polling ----
       fetchMessages();
       pollTimer = setInterval(fetchMessages, 5000);
 
@@ -309,9 +355,8 @@
       setStatus('❌ ' + err.message, 'err');
       $('emailAddress').value = '';
       $('mailList').innerHTML = '<div class="empty">Failed: ' + err.message + '</div>';
-      showToast('❌ ' + err.message, true);
-    } finally {
-      $('newBtn').disabled = false;
+      showToast('❌ ' + err.message, 'err');
+      startCooldown();
     }
   }
 
@@ -328,7 +373,6 @@
 
       const data = await res.json();
       const messages = data['hydra:member'] || data;
-      console.log('Messages:', messages);
 
       if (!Array.isArray(messages) || messages.length === 0) {
         if (!document.querySelector('.mail')) {
@@ -345,6 +389,7 @@
         const from = msg.from ? msg.from.address : 'Unknown';
         const el = document.createElement('div');
         el.className = 'mail';
+        el.dataset.id = msg.id;
         el.innerHTML = `
           <div class="avatar">${from.charAt(0).toUpperCase()}</div>
           <div class="mail-info">
@@ -353,7 +398,7 @@
           </div>
           <div class="mail-time">${new Date(msg.createdAt).toLocaleTimeString()}</div>
         `;
-        el.onclick = () => readMessage(msg.id);
+        el.onclick = () => readMessage(msg.id, el);
         list.appendChild(el);
       });
     } catch (err) {
@@ -362,10 +407,15 @@
   }
 
   /* ======================================================
-     READ MESSAGE
+     READ MESSAGE — Inline Viewer
      ====================================================== */
-  async function readMessage(id) {
+  async function readMessage(id, el) {
     if (!currentToken) return;
+
+    // Active state
+    document.querySelectorAll('.mail').forEach(m => m.classList.remove('active'));
+    if (el) el.classList.add('active');
+
     try {
       const res = await fetch(`${WORKER_URL}/messages/${id}`, {
         headers: { Authorization: `Bearer ${currentToken}` }
@@ -374,11 +424,25 @@
       let body = '';
       if (Array.isArray(msg.text)) body = msg.text.join('\n');
       else body = msg.text || msg.html || 'No content';
-      const clean = body.replace(/<[^>]*>/g, '').substring(0, 1000);
-      alert('From: ' + (msg.from?.address || 'Unknown') + '\nSubject: ' + (msg.subject || '(no subject)') + '\n\n' + clean);
+      const clean = body.replace(/<[^>]*>/g, '').trim() || '(empty message)';
+
+      $('mvFrom').textContent = 'From: ' + (msg.from?.address || 'Unknown');
+      $('mvSubject').textContent = 'Subject: ' + (msg.subject || '(no subject)');
+      $('mvBody').textContent = clean;
+
+      const viewer = $('messageViewer');
+      viewer.classList.add('show');
+      // Scroll into view
+      setTimeout(() => viewer.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+
     } catch (err) {
-      showToast('❌ Failed to read message', true);
+      showToast('❌ Failed to read message', 'err');
     }
+  }
+
+  function closeMessage() {
+    $('messageViewer').classList.remove('show');
+    document.querySelectorAll('.mail').forEach(m => m.classList.remove('active'));
   }
 
   /* ======================================================
