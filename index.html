@@ -4,671 +4,111 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Multimail · Temp Mail</title>
-  <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     :root {
-      --bg: #202123;
-      --card: #2a2b2e;
-      --primary: #10a37f;
-      --primary-hover: #0e8e6f;
-      --secondary: #3b82f6;
-      --yellow: #f59e0b;
-      --text: #ececf1;
-      --text-secondary: #8e8ea0;
-      --border: #4a4b4e;
-      --error: #ef4444;
-      --radius: 12px;
-      --shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-size: 15px;
-      line-height: 1.5;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px 12px;
-    }
-
-    .app {
-      max-width: 800px;
-      width: 100%;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      padding: 8px 0 4px;
-    }
-
-    .logo {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text);
-      user-select: none;
-    }
-
-    .logo span {
-      color: var(--primary);
-    }
-
-    .nav {
-      display: flex;
-      gap: 20px;
-      font-weight: 500;
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .nav a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: color 0.2s;
-      cursor: pointer;
-    }
-
-    .nav a:hover,
-    .nav a.active {
-      color: var(--text);
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 24px 20px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      transition: border-color 0.2s;
-    }
-
-    .hero-title {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
-    }
-
-    .hero-sub {
-      color: var(--text-secondary);
-      font-size: 15px;
-      margin-bottom: 20px;
-    }
-
-    .email-row {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .email-input {
-      flex: 1;
-      background: #1b1c1f;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 15px;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
-      font-weight: 500;
-      letter-spacing: 0.2px;
-      width: 100%;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    .email-input:focus {
-      border-color: var(--primary);
-    }
-
-    .email-input::placeholder {
-      color: var(--text-secondary);
-      opacity: 0.7;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 10px;
-      padding: 14px 20px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s, opacity 0.2s, transform 0.1s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      background: var(--primary);
-      color: #fff;
-      line-height: 1;
-      white-space: nowrap;
-      user-select: none;
-    }
-
-    .btn:hover:not(:disabled) {
-      background: var(--primary-hover);
-    }
-
-    .btn:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: #3a3b3e;
-      color: var(--text);
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: #4a4b4e;
-    }
-
-    .btn-block {
-      width: 100%;
-    }
-
-    .btn-sm {
-      padding: 10px 16px;
-      font-size: 14px;
-    }
-
-    .action-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 6px;
-    }
-
-    .status-text {
-      color: var(--text-secondary);
-      font-size: 14px;
-      margin-top: 4px;
-      min-height: 22px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.3; }
-      100% { opacity: 1; }
-    }
-
-    .inbox-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .inbox-title {
-      font-size: 18px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .badge {
-      background: var(--primary);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 2px 10px;
-      border-radius: 20px;
-      min-width: 24px;
-      text-align: center;
-      line-height: 1.6;
-      display: inline-block;
-    }
-
-    .message-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .message-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      background: #1f2023;
-      border-radius: 10px;
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.2s;
-      text-align: left;
-      width: 100%;
-      color: var(--text);
-      font-size: 14px;
-    }
-
-    .message-item:hover {
-      background: #2f3033;
-    }
-
-    .message-item.active {
-      border-color: var(--primary);
-      background: #1e2a27;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--secondary);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 17px;
-      flex-shrink: 0;
-      text-transform: uppercase;
-    }
-
-    .msg-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .msg-sender {
-      font-weight: 600;
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--text);
-    }
-
-    .msg-subject {
-      font-size: 13px;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 2px;
-    }
-
-    .msg-time {
-      font-size: 12px;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .viewer {
-      margin-top: 16px;
-      padding: 18px 16px;
-      background: #1b1c1f;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      position: relative;
-      display: none;
-    }
-
-    .viewer.open {
-      display: block;
-    }
-
-    .viewer-close {
-      position: absolute;
-      top: 12px;
-      right: 14px;
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 22px;
-      cursor: pointer;
-      line-height: 1;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .viewer-close:hover {
-      background: #2f3033;
-      color: var(--text);
-    }
-
-    .viewer-field {
-      margin-bottom: 8px;
-      font-size: 14px;
-      word-break: break-word;
-    }
-
-    .viewer-label {
-      color: var(--text-secondary);
-      font-weight: 500;
-      margin-right: 6px;
-    }
-
-    .viewer-body {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-      font-size: 14px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-height: 340px;
-      overflow-y: auto;
-      color: #d4d4d8;
-    }
-
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-      width: 100%;
-      max-width: 400px;
-      padding: 0 16px;
-      pointer-events: none;
-    }
-
-    .toast {
-      background: #2f3033;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 12px 22px;
-      border-radius: 30px;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      animation: toastIn 0.25s ease;
-      pointer-events: auto;
-      text-align: center;
-      word-break: break-word;
-      backdrop-filter: blur(4px);
-    }
-
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .toast.error {
-      border-color: var(--error);
-      background: #2a1a1a;
-      color: #fca5a5;
-    }
-
-    .toast.success {
-      border-color: var(--primary);
-      background: #1a2a26;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .about-list {
-      list-style: none;
-      margin: 12px 0;
-    }
-
-    .about-list li {
-      padding: 8px 0 8px 24px;
-      position: relative;
-      color: var(--text-secondary);
-      font-size: 15px;
-    }
-
-    .about-list li::before {
-      content: "✓";
-      color: var(--primary);
-      position: absolute;
-      left: 0;
-      font-weight: 700;
-    }
-
-    .step {
-      display: flex;
-      gap: 14px;
-      margin-bottom: 16px;
-      align-items: flex-start;
-    }
-
-    .step-num {
-      background: var(--primary);
-      color: #fff;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .step p {
-      color: var(--text-secondary);
-      font-size: 15px;
-      margin-top: 2px;
-    }
-
-    .contact-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .contact-form input,
-    .contact-form textarea {
-      background: #1b1c1f;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 15px;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
-      width: 100%;
-      resize: vertical;
-    }
-
-    .contact-form input:focus,
-    .contact-form textarea:focus {
-      border-color: var(--primary);
-    }
-
-    .contact-form textarea {
-      min-height: 100px;
-    }
-
-    .footer {
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 13px;
-      padding: 24px 0 16px;
-      border-top: 1px solid var(--border);
-      margin-top: 12px;
-      width: 100%;
-      opacity: 0.8;
-    }
-
-    .adsense-container {
-      margin: 8px 0;
-      text-align: center;
-      min-height: 100px;
-      overflow: hidden;
-      border-radius: var(--radius);
-      background: #1b1c1f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .adsense-container ins {
-      display: block;
-      width: 100%;
-    }
-
+      --bg: #202123; --card: #2a2b2e; --primary: #10a37f; --primary-hover: #0e8e6f;
+      --secondary: #3b82f6; --yellow: #f59e0b; --text: #ececf1;
+      --text-secondary: #8e8ea0; --border: #4a4b4e; --error: #ef4444;
+      --radius: 12px; --shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    body { background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 16px 12px; }
+    .app { max-width: 800px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 8px 0 4px; }
+    .logo { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); user-select: none; }
+    .logo span { color: var(--primary); }
+    .nav { display: flex; gap: 20px; font-weight: 500; font-size: 14px; color: var(--text-secondary); }
+    .nav a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; cursor: pointer; }
+    .nav a:hover, .nav a.active { color: var(--text); }
+    .card { background: var(--card); border-radius: var(--radius); padding: 24px 20px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: border-color 0.2s; }
+    .hero-title { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .hero-sub { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; }
+    .email-row { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+    .email-input { flex: 1; background: #1b1c1f; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 15px; color: var(--text); outline: none; transition: border-color 0.2s; font-weight: 500; letter-spacing: 0.2px; width: 100%; -webkit-appearance: none; appearance: none; }
+    .email-input:focus { border-color: var(--primary); }
+    .email-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+    .btn { border: none; border-radius: 10px; padding: 14px 20px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s, opacity 0.2s, transform 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--primary); color: #fff; line-height: 1; white-space: nowrap; user-select: none; }
+    .btn:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: #3a3b3e; color: var(--text); }
+    .btn-secondary:hover:not(:disabled) { background: #4a4b4e; }
+    .btn-block { width: 100%; }
+    .btn-sm { padding: 10px 16px; font-size: 14px; }
+    .action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+    .status-text { color: var(--text-secondary); font-size: 14px; margin-top: 4px; min-height: 22px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    .inbox-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    .inbox-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .badge { background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; padding: 2px 10px; border-radius: 20px; min-width: 24px; text-align: center; line-height: 1.6; display: inline-block; }
+    .message-list { display: flex; flex-direction: column; gap: 8px; }
+    .message-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #1f2023; border-radius: 10px; border: 1px solid transparent; cursor: pointer; transition: background 0.15s, border-color 0.2s; text-align: left; width: 100%; color: var(--text); font-size: 14px; }
+    .message-item:hover { background: #2f3033; }
+    .message-item.active { border-color: var(--primary); background: #1e2a27; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--secondary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; flex-shrink: 0; text-transform: uppercase; }
+    .msg-info { flex: 1; min-width: 0; }
+    .msg-sender { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+    .msg-subject { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .msg-time { font-size: 12px; color: var(--text-secondary); white-space: nowrap; flex-shrink: 0; }
+    .viewer { margin-top: 16px; padding: 18px 16px; background: #1b1c1f; border-radius: 10px; border: 1px solid var(--border); position: relative; display: none; }
+    .viewer.open { display: block; }
+    .viewer-close { position: absolute; top: 12px; right: 14px; background: transparent; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer; line-height: 1; padding: 4px 8px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+    .viewer-close:hover { background: #2f3033; color: var(--text); }
+    .viewer-field { margin-bottom: 8px; font-size: 14px; word-break: break-word; }
+    .viewer-label { color: var(--text-secondary); font-weight: 500; margin-right: 6px; }
+    .viewer-body { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; max-height: 340px; overflow-y: auto; color: #d4d4d8; }
+    .toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; align-items: center; width: 100%; max-width: 400px; padding: 0 16px; pointer-events: none; }
+    .toast { background: #2f3033; border: 1px solid var(--border); color: var(--text); padding: 12px 22px; border-radius: 30px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.25s ease; pointer-events: auto; text-align: center; word-break: break-word; backdrop-filter: blur(4px); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .toast.error { border-color: var(--error); background: #2a1a1a; color: #fca5a5; }
+    .toast.success { border-color: var(--primary); background: #1a2a26; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .about-list { list-style: none; margin: 12px 0; }
+    .about-list li { padding: 8px 0 8px 24px; position: relative; color: var(--text-secondary); font-size: 15px; }
+    .about-list li::before { content: "✓"; color: var(--primary); position: absolute; left: 0; font-weight: 700; }
+    .step { display: flex; gap: 14px; margin-bottom: 16px; align-items: flex-start; }
+    .step-num { background: var(--primary); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    .step p { color: var(--text-secondary); font-size: 15px; margin-top: 2px; }
+    .contact-form { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+    .contact-form input, .contact-form textarea { background: #1b1c1f; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 15px; color: var(--text); outline: none; transition: border-color 0.2s; width: 100%; resize: vertical; }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: var(--primary); }
+    .contact-form textarea { min-height: 100px; }
+    .footer { text-align: center; color: var(--text-secondary); font-size: 13px; padding: 24px 0 16px; border-top: 1px solid var(--border); margin-top: 12px; width: 100%; opacity: 0.8; }
+    .adsense-container { margin: 8px 0; text-align: center; min-height: 100px; overflow: hidden; border-radius: var(--radius); background: #1b1c1f; display: flex; align-items: center; justify-content: center; }
+    .adsense-container ins { display: block; width: 100%; }
     @media (min-width: 600px) {
-      body {
-        padding: 28px 20px;
-        font-size: 15px;
-      }
-
-      .app {
-        gap: 20px;
-      }
-
-      .card {
-        padding: 28px 28px;
-      }
-
-      .hero-title {
-        font-size: 36px;
-      }
-
-      .hero-sub {
-        font-size: 16px;
-      }
-
-      .email-row {
-        flex-direction: row;
-        align-items: center;
-      }
-
-      .email-input {
-        flex: 1;
-        width: auto;
-      }
-
-      .copy-btn {
-        width: auto;
-        flex-shrink: 0;
-      }
-
-      .action-row .btn {
-        width: auto;
-        flex: 0 1 auto;
-      }
-
-      .nav {
-        font-size: 15px;
-        gap: 28px;
-      }
-
-      .logo {
-        font-size: 28px;
-      }
-
-      .message-item {
-        padding: 16px 20px;
-      }
-
-      .viewer {
-        padding: 22px 24px;
-      }
+      body { padding: 28px 20px; font-size: 15px; }
+      .app { gap: 20px; }
+      .card { padding: 28px 28px; }
+      .hero-title { font-size: 36px; }
+      .hero-sub { font-size: 16px; }
+      .email-row { flex-direction: row; align-items: center; }
+      .email-input { flex: 1; width: auto; }
+      .copy-btn { width: auto; flex-shrink: 0; }
+      .action-row .btn { width: auto; flex: 0 1 auto; }
+      .nav { font-size: 15px; gap: 28px; }
+      .logo { font-size: 28px; }
+      .message-item { padding: 16px 20px; }
+      .viewer { padding: 22px 24px; }
     }
-
     @media (max-width: 400px) {
-      .hero-title {
-        font-size: 24px;
-      }
-
-      .card {
-        padding: 16px 14px;
-      }
-
-      .nav {
-        gap: 14px;
-        font-size: 13px;
-      }
-
-      .logo {
-        font-size: 22px;
-      }
-
-      .btn {
-        font-size: 14px;
-        padding: 12px 16px;
-      }
-
-      .email-input {
-        font-size: 14px;
-        padding: 12px 14px;
-      }
-
-      .message-item {
-        padding: 12px 12px;
-        gap: 10px;
-      }
-
-      .avatar {
-        width: 34px;
-        height: 34px;
-        font-size: 14px;
-      }
+      .hero-title { font-size: 24px; }
+      .card { padding: 16px 14px; }
+      .nav { gap: 14px; font-size: 13px; }
+      .logo { font-size: 22px; }
+      .btn { font-size: 14px; padding: 12px 16px; }
+      .email-input { font-size: 14px; padding: 12px 14px; }
+      .message-item { padding: 12px 12px; gap: 10px; }
+      .avatar { width: 34px; height: 34px; font-size: 14px; }
     }
-
-    .spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255,255,255,0.15);
-      border-radius: 50%;
-      border-top-color: var(--primary);
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .hidden {
-      display: none !important;
-    }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; border-top-color: var(--primary); animation: spin 0.7s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <div class="app" id="app">
+  <div class="app">
     <header class="header">
       <div class="logo">Multi<span>mail</span></div>
       <nav class="nav">
@@ -678,21 +118,17 @@
       </nav>
     </header>
 
-    <!-- ============ HOME ============ -->
     <section id="page-home" class="section active">
       <div class="card">
         <h1 class="hero-title">Multimail</h1>
         <p class="hero-sub">Your Temporary Email Address</p>
-
         <div class="email-row">
           <input type="text" class="email-input" id="emailDisplay" readonly placeholder="Generating…" value="">
-          <button class="btn copy-btn" id="copyBtn" title="Copy email">📋 Copy</button>
+          <button class="btn copy-btn" id="copyBtn">📋 Copy</button>
         </div>
-
         <div class="action-row">
           <button class="btn btn-secondary" id="newEmailBtn" disabled>⏳ Wait</button>
         </div>
-
         <div class="status-text" id="statusText">
           <span class="spinner" id="statusSpinner"></span>
           <span id="statusMessage">Initializing…</span>
@@ -700,29 +136,18 @@
       </div>
 
       <div class="adsense-container">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="1234567890"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
       </div>
 
       <div class="card">
         <div class="inbox-header">
-          <div class="inbox-title">
-            Inbox <span class="badge" id="msgCount">0</span>
-          </div>
+          <div class="inbox-title">Inbox <span class="badge" id="msgCount">0</span></div>
           <button class="btn btn-secondary btn-sm" id="refreshBtn">↻ Refresh</button>
         </div>
-
         <div class="message-list" id="messageList">
-          <div style="color: var(--text-secondary); font-size: 14px; text-align: center; padding: 24px 0;">
-            No messages yet — waiting for incoming mail…
-          </div>
+          <div style="color: var(--text-secondary); font-size: 14px; text-align: center; padding: 24px 0;">No messages yet — waiting for incoming mail…</div>
         </div>
-
         <div class="viewer" id="viewer">
           <button class="viewer-close" id="viewerClose">✕</button>
           <div class="viewer-field"><span class="viewer-label">From:</span><span id="viewerFrom"></span></div>
@@ -732,25 +157,15 @@
       </div>
 
       <div class="adsense-container">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="0987654321"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="0987654321" data-ad-format="auto" data-full-width-responsive="true"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
       </div>
     </section>
 
-    <!-- ============ ABOUT ============ -->
     <section id="page-about" class="section">
       <div class="card">
         <h1 class="hero-title" style="font-size: 28px;">About Multimail</h1>
-        <p style="color: var(--text-secondary); margin-top: 8px;">
-          Multimail is a free, disposable email service that keeps your real inbox clean and private.
-          Receive verification codes, sign-up confirmations and temporary messages without exposing your identity.
-        </p>
-
+        <p style="color: var(--text-secondary); margin-top: 8px;">Multimail is a free, disposable email service that keeps your real inbox clean and private. Receive verification codes, sign-up confirmations and temporary messages without exposing your identity.</p>
         <h3 style="margin-top: 28px; font-size: 17px;">Why use it?</h3>
         <ul class="about-list">
           <li>Protect your real email from spam and phishing</li>
@@ -758,58 +173,25 @@
           <li>Perfect for one-time verification codes</li>
           <li>Works on mobile and desktop, no app needed</li>
         </ul>
-
         <h3 style="margin-top: 28px; font-size: 17px;">How it works</h3>
-        <div class="step">
-          <div class="step-num">1</div>
-          <div>
-            <strong>Get your address</strong>
-            <p>We automatically generate a random temporary email for you.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div>
-            <strong>Use it anywhere</strong>
-            <p>Paste the address into any sign-up form or verification field.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div>
-            <strong>Read your messages</strong>
-            <p>Incoming mail appears in your inbox within seconds — no refresh needed.</p>
-          </div>
-        </div>
-
+        <div class="step"><div class="step-num">1</div><div><strong>Get your address</strong><p>We automatically generate a random temporary email for you.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><strong>Use it anywhere</strong><p>Paste the address into any sign-up form or verification field.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><strong>Read your messages</strong><p>Incoming mail appears in your inbox within seconds — no refresh needed.</p></div></div>
         <div style="margin-top: 24px; padding: 16px; background: #1b1c1f; border-radius: 10px; border-left: 4px solid var(--yellow);">
           <strong style="color: var(--yellow);">⚠ Rate limit</strong>
-          <p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">
-            To prevent abuse, the service limits how often you can create new addresses.
-            If you hit the limit, wait a moment or switch between Wi‑Fi and mobile data.
-          </p>
+          <p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">To prevent abuse, the service limits how often you can create new addresses. If you hit the limit, wait a moment or switch between Wi‑Fi and mobile data.</p>
         </div>
       </div>
-
       <div class="adsense-container">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="1122334455"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="1122334455" data-ad-format="auto" data-full-width-responsive="true"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
       </div>
     </section>
 
-    <!-- ============ CONTACT ============ -->
     <section id="page-contact" class="section">
       <div class="card">
         <h1 class="hero-title" style="font-size: 28px;">Contact</h1>
-        <p style="color: var(--text-secondary); margin-top: 8px;">
-          Questions, feedback or issues? Drop us a line and we'll get back to you.
-        </p>
-
+        <p style="color: var(--text-secondary); margin-top: 8px;">Questions, feedback or issues? Drop us a line and we'll get back to you.</p>
         <form class="contact-form" id="contactForm">
           <input type="text" id="contactName" placeholder="Your name" required>
           <input type="email" id="contactEmail" placeholder="Your email" required>
@@ -817,21 +199,13 @@
           <button type="submit" class="btn btn-block">Send message</button>
         </form>
       </div>
-
       <div class="adsense-container">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="5566778899"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="5566778899" data-ad-format="auto" data-full-width-responsive="true"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
       </div>
     </section>
 
-    <footer class="footer">
-      © 2026 Multimail · Free temporary email service
-    </footer>
+    <footer class="footer">© 2026 Multimail · Free temporary email service</footer>
   </div>
 
   <div class="toast-container" id="toastContainer"></div>
@@ -841,21 +215,16 @@
       'use strict';
 
       // ═══════════════════════════════════════════
-      // CONFIG — mail.tm public API (no key needed)
+      // CONFIG — 1secmail API (CORS-enabled)
       // ═══════════════════════════════════════════
-      const API_BASE = 'https://api.mail.tm';
+      const API_BASE = 'https://www.1secmail.com/api/v1/';
       const POLL_INTERVAL = 5000;
       const COOLDOWN_MS = 30000;
 
-      // ═══════════════════════════════════════════
-      // STATE
-      // ═══════════════════════════════════════════
       const state = {
-        token: null,
         email: '',
-        password: '',
-        accountId: null,
-        domains: [],
+        login: '',
+        domain: '',
         messages: [],
         cooldownUntil: 0,
         cooldownTimer: null,
@@ -864,9 +233,6 @@
         initializing: false
       };
 
-      // ═══════════════════════════════════════════
-      // DOM REFS
-      // ═══════════════════════════════════════════
       const $ = id => document.getElementById(id);
       const emailDisplay = $('emailDisplay');
       const copyBtn = $('copyBtn');
@@ -884,9 +250,6 @@
       const toastContainer = $('toastContainer');
       const contactForm = $('contactForm');
 
-      // ═══════════════════════════════════════════
-      // UTILITIES
-      // ═══════════════════════════════════════════
       function randomString(len) {
         const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
         let out = '';
@@ -894,9 +257,7 @@
         return out;
       }
 
-      function log(...args) {
-        console.log('[Multimail]', ...args);
-      }
+      function log(...args) { console.log('[Multimail]', ...args); }
 
       function showToast(msg, type = '') {
         const el = document.createElement('div');
@@ -931,115 +292,57 @@
         try {
           const d = new Date(ts);
           if (isNaN(d.getTime())) return '';
-          const now = new Date();
-          const diff = (now - d) / 1000;
+          const diff = (Date.now() - d.getTime()) / 1000;
           if (diff < 60) return 'just now';
           if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
           if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
           return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-        } catch (e) {
-          return '';
-        }
+        } catch (e) { return ''; }
       }
 
       // ═══════════════════════════════════════════
-      // API LAYER — mail.tm compatible
+      // API — 1secmail
       // ═══════════════════════════════════════════
-      async function apiFetch(path, options = {}) {
-        const url = path.startsWith('http') ? path : API_BASE + path;
-        const headers = {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          ...(options.headers || {})
-        };
-        if (state.token && !headers['Authorization']) {
-          headers['Authorization'] = 'Bearer ' + state.token;
-        }
-
-        log('API →', options.method || 'GET', path);
+      async function apiFetch(params) {
+        const url = API_BASE + '?' + new URLSearchParams(params).toString();
+        log('API →', url);
 
         let res;
         try {
-          res = await fetch(url, { ...options, headers });
+          res = await fetch(url, { method: 'GET' });
         } catch (networkErr) {
           log('Network error:', networkErr);
           throw new Error('Network error — check your connection.');
         }
 
-        const text = await res.text();
-        let data = null;
-        try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
-
         if (!res.ok) {
-          let msg = 'Request failed';
-          if (data) {
-            if (typeof data === 'string') msg = data;
-            else if (data['hydra:description']) msg = data['hydra:description'];
-            else if (data.message) msg = data.message;
-            else if (data.error) msg = data.error;
-            else if (data.detail) msg = data.detail;
-          }
-
-          log('API error', res.status, msg);
-
-          if (res.status === 429 || /too many|rate limit/i.test(String(msg))) {
-            const err = new Error('Rate limit reached — please wait a moment.');
-            err.rateLimited = true;
-            throw err;
-          }
-
-          throw new Error(typeof msg === 'string' ? msg : 'Request failed (' + res.status + ')');
+          const text = await res.text();
+          log('API error', res.status, text);
+          throw new Error('Request failed (' + res.status + ')');
         }
 
-        log('API ←', res.status, path);
+        const data = await res.json();
+        log('API ←', data);
         return data;
       }
 
-      // ═══════════════════════════════════════════
-      // DOMAIN + ACCOUNT CREATION
-      // ═══════════════════════════════════════════
       async function fetchDomains() {
         log('Fetching domains…');
-        const data = await apiFetch('/domains?page=1');
-        // mail.tm returns hydra:member array
-        if (Array.isArray(data)) return data;
-        if (data && Array.isArray(data['hydra:member'])) return data['hydra:member'];
-        if (data && Array.isArray(data.domains)) return data.domains;
+        const data = await apiFetch({ action: 'getDomainList' });
+        if (Array.isArray(data) && data.length) return data;
         throw new Error('No domains available.');
       }
 
-      async function createAccount(address, password) {
-        log('Creating account for', address);
-        const data = await apiFetch('/accounts', {
-          method: 'POST',
-          body: JSON.stringify({ address, password })
-        });
-        return data;
-      }
-
-      async function login(address, password) {
-        log('Logging in…');
-        const data = await apiFetch('/token', {
-          method: 'POST',
-          body: JSON.stringify({ address, password })
-        });
-        const token = data && (data.token || data.access_token || data.id_token);
-        if (!token) throw new Error('Authentication failed — no token received.');
-        state.accountId = data.id || null;
-        return token;
-      }
-
-      async function fetchMessages() {
-        if (!state.token) return [];
-        const data = await apiFetch('/messages?page=1');
+      async function fetchMessages(login, domain) {
+        if (!login || !domain) return [];
+        const data = await apiFetch({ action: 'getMessages', login, domain });
         if (Array.isArray(data)) return data;
-        if (data && Array.isArray(data['hydra:member'])) return data['hydra:member'];
-        if (data && Array.isArray(data.messages)) return data.messages;
         return [];
       }
 
-      async function fetchMessage(id) {
-        const data = await apiFetch('/messages/' + encodeURIComponent(id));
+      async function fetchMessage(id, login, domain) {
+        if (!id || !login || !domain) throw new Error('Missing parameters');
+        const data = await apiFetch({ action: 'readMessage', login, domain, id });
         return data;
       }
 
@@ -1067,7 +370,7 @@
       }
 
       // ═══════════════════════════════════════════
-      // EMAIL GENERATION FLOW
+      // EMAIL GENERATION
       // ═══════════════════════════════════════════
       async function generateNewEmail() {
         if (state.initializing) return;
@@ -1082,57 +385,36 @@
         setStatus('Initializing…', true);
         viewer.classList.remove('open');
         state.currentMessageId = null;
-        state.token = null;
 
         try {
-          // 1. Domains
+          // 1. Fetch domains
           setStatus('Fetching domains…', true);
-          state.domains = await fetchDomains();
-          if (!state.domains.length) throw new Error('No domains available.');
+          const domains = await fetchDomains();
+          const domain = domains[Math.floor(Math.random() * domains.length)];
 
-          // Pick a domain — mail.tm returns objects with .domain property
-          const domainObj = state.domains[Math.floor(Math.random() * state.domains.length)];
-          const domain = typeof domainObj === 'string' ? domainObj : (domainObj.domain || domainObj.name);
-          if (!domain) throw new Error('Invalid domain received.');
-
-          // 2. Build address
-          const local = randomString(10);
-          const address = local + '@' + domain;
-          const password = randomString(16);
+          // 2. Generate address
+          const login = randomString(10);
+          const address = login + '@' + domain;
           state.email = address;
-          state.password = password;
+          state.login = login;
+          state.domain = domain;
 
-          // 3. Create account
-          setStatus('Creating account…', true);
-          await createAccount(address, password);
-
-          // 4. Login
-          setStatus('Signing in…', true);
-          const token = await login(address, password);
-          state.token = token;
-
-          // 5. Update UI
+          // 3. Update UI
           emailDisplay.value = address;
           setStatus('Ready — waiting for messages.', false);
           showToast('New address created!', 'success');
           startCooldown();
 
-          // 6. Start polling
+          // 4. Start polling
           clearInterval(state.pollTimer);
           state.pollTimer = setInterval(pollMessages, POLL_INTERVAL);
           pollMessages();
 
         } catch (err) {
           console.error('[Multimail] Generation failed:', err);
-          if (err.rateLimited) {
-            setStatus('⚠ Rate limit reached', false);
-            showToast('Too many requests — wait a bit or switch between Wi‑Fi and mobile data.', 'error');
-          } else {
-            setStatus('⚠ ' + (err.message || 'Something went wrong'), false);
-            showToast(err.message || 'Failed to create address.', 'error');
-          }
+          setStatus('⚠ ' + (err.message || 'Something went wrong'), false);
+          showToast(err.message || 'Failed to create address.', 'error');
           emailDisplay.value = '';
-          state.token = null;
           newEmailBtn.disabled = false;
           newEmailBtn.textContent = '✉ New Email';
         } finally {
@@ -1141,20 +423,16 @@
       }
 
       // ═══════════════════════════════════════════
-      // POLLING & MESSAGE RENDERING
+      // POLLING & RENDERING
       // ═══════════════════════════════════════════
       async function pollMessages() {
-        if (!state.token) return;
+        if (!state.login || !state.domain) return;
         try {
-          const msgs = await fetchMessages();
+          const msgs = await fetchMessages(state.login, state.domain);
           state.messages = msgs;
           renderMessages(msgs);
         } catch (err) {
-          if (err.rateLimited) {
-            log('Poll rate limited.');
-          } else {
-            log('Poll error:', err.message);
-          }
+          log('Poll error:', err.message);
         }
       }
 
@@ -1167,15 +445,10 @@
 
         messageList.innerHTML = '';
         msgs.forEach(msg => {
-          const id = msg.id || msg._id || msg.uid;
-          // mail.tm: msg.from = { address, name }
-          let from = 'Unknown';
-          if (msg.from) {
-            if (typeof msg.from === 'string') from = msg.from;
-            else if (msg.from.address) from = msg.from.name ? (msg.from.name + ' <' + msg.from.address + '>') : msg.from.address;
-          }
+          const id = msg.id;
+          const from = msg.from || 'Unknown';
           const subject = msg.subject || '(no subject)';
-          const time = msg.createdAt || msg.date || msg.timestamp || msg.received_at;
+          const time = msg.date;
           const initial = from.charAt(0) || '?';
 
           const item = document.createElement('div');
@@ -1198,7 +471,7 @@
       // OPEN / READ MESSAGE
       // ═══════════════════════════════════════════
       async function openMessage(id) {
-        if (!state.token) {
+        if (!state.login || !state.domain) {
           showToast('Not connected yet.', 'error');
           return;
         }
@@ -1214,34 +487,14 @@
         viewerBody.textContent = 'Loading…';
 
         try {
-          const msg = await fetchMessage(id);
+          const msg = await fetchMessage(id, state.login, state.domain);
           if (!msg) throw new Error('Message not found.');
 
-          let from = 'Unknown';
-          if (msg.from) {
-            if (typeof msg.from === 'string') from = msg.from;
-            else if (msg.from.address) from = msg.from.name ? (msg.from.name + ' <' + msg.from.address + '>') : msg.from.address;
-          }
+          const from = msg.from || 'Unknown';
           const subject = msg.subject || '(no subject)';
-
-          let body = '';
-          if (Array.isArray(msg.text)) {
-            body = msg.text.join('\n');
-          } else if (typeof msg.text === 'string' && msg.text) {
-            body = msg.text;
-          } else if (Array.isArray(msg.html)) {
-            body = sanitizeText(msg.html.join('\n'));
-          } else if (typeof msg.html === 'string' && msg.html) {
-            body = sanitizeText(msg.html);
-          } else if (typeof msg.body === 'string') {
-            body = msg.body;
-          } else if (typeof msg.content === 'string') {
-            body = msg.content;
-          }
-
-          body = body.trim();
-          if (!body) body = 'No content';
-
+          let body = msg.textBody || msg.body || '';
+          if (!body && msg.htmlBody) body = sanitizeText(msg.htmlBody);
+          body = body.trim() || 'No content';
           if (body.length > 1000) body = body.slice(0, 1000) + '…';
 
           viewerFrom.textContent = from;
@@ -1266,10 +519,7 @@
       // ═══════════════════════════════════════════
       async function copyEmail() {
         const email = emailDisplay.value.trim();
-        if (!email) {
-          showToast('No email address to copy.', 'error');
-          return;
-        }
+        if (!email) { showToast('No email address to copy.', 'error'); return; }
 
         try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1284,7 +534,6 @@
             window.getSelection().removeAllRanges();
           }
         } catch (err) {
-          log('Clipboard error:', err);
           try {
             emailDisplay.select();
             document.execCommand('copy');
@@ -1308,14 +557,11 @@
         });
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        try {
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {}
+        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
       }
 
       // ═══════════════════════════════════════════
-      // EVENT LISTENERS
+      // EVENTS
       // ═══════════════════════════════════════════
       function bindEvents() {
         copyBtn.addEventListener('click', copyEmail);
@@ -1326,7 +572,7 @@
         });
 
         refreshBtn.addEventListener('click', () => {
-          if (!state.token) {
+          if (!state.login || !state.domain) {
             showToast('No active address — generate one first.', 'error');
             return;
           }
@@ -1349,11 +595,7 @@
           const email = $('contactEmail').value.trim();
           const msg = $('contactMessage').value.trim();
 
-          if (!name || !email || !msg) {
-            showToast('Please fill in all fields.', 'error');
-            return;
-          }
-
+          if (!name || !email || !msg) { showToast('Please fill in all fields.', 'error'); return; }
           showToast('Message sent — we\'ll get back to you soon!', 'success');
           contactForm.reset();
         });
@@ -1361,7 +603,7 @@
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
             clearInterval(state.pollTimer);
-          } else if (state.token) {
+          } else if (state.login && state.domain) {
             clearInterval(state.pollTimer);
             state.pollTimer = setInterval(pollMessages, POLL_INTERVAL);
             pollMessages();
@@ -1374,7 +616,7 @@
       // ═══════════════════════════════════════════
       function init() {
         bindEvents();
-        log('Multimail initialized. Using mail.tm API.');
+        log('Multimail initialized. Using 1secmail API.');
         generateNewEmail();
       }
 
