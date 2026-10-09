@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi Mail - Fast, Free & Anonymous Temporary Email Generator</title>
+  <meta name="description" content="Multi Mail provides instant, secure, and disposable temporary email addresses. Protect your primary inbox from spam, bots, and phishing with our free temp mail service.">
+  <meta name="keywords" content="temp mail, temporary email, disposable email, throwaway email, anonymous mail, mail.tm client, multi mail, spam blocker">
+  <meta name="author" content="Multi Mail Team">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook SEO -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://multimail.app/">
+  <meta property="og:title" content="Multi Mail - Free Anonymous Temporary Email Generator">
+  <meta property="og:description" content="Generate instant temporary email addresses to keep your primary inbox safe from spam and unwanted subscriptions.">
+  <meta property="og:image" content="https://placehold.co/1200x630/4f46e5/ffffff?text=Multi+Mail+Temp+Email">
+
+  <!-- Twitter Card SEO -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Multi Mail - Fast & Secure Temp Email">
+  <meta name="twitter:description" content="Protect your identity with temporary disposable email addresses generated in seconds.">
+  <meta name="twitter:image" content="https://placehold.co/1200x630/4f46e5/ffffff?text=Multi+Mail+Temp+Email">
+
+  <!-- Structured Data JSON-LD for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Multi Mail",
+    "url": "https://multimail.app/",
+    "description": "Multi Mail is a fast, anonymous, and free temporary email generator tool designed to protect user privacy and block spam.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google AdSense Code Tag Injection Point -->
+  <!-- 
+    Instructions: Replace YOUR_CLIENT_ID with your actual AdSense publisher ID (e.g. ca-pub-1234567890123456)
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_CLIENT_ID" crossorigin="anonymous"></script> 
+  -->
+
+  <!-- Custom Styles for Smooth Animations & Styling -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.7);
+    }
+    .pulse-ring {
+      animation: pulse-border 2s infinite;
+    }
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 flex flex-col justify-between">
+
+  <!-- Header Navbar -->
+  <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+          <i class="fa-solid fa-envelope-open-text text-lg"></i>
+        </div>
+        <span>Multi<span class="text-brand-600 dark:text-brand-500">Mail</span></span>
+      </a>
+
+      <!-- Right Controls -->
+      <div class="flex items-center gap-3">
+        <!-- Status indicator -->
+        <span class="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Service Active
+        </span>
+
+        <!-- Dark/Light Theme Switcher -->
+        <button id="themeToggleBtn" aria-label="Toggle dark mode" class="p-2.5 rounded-lg text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Top Banner Ad Unit (728x90 Header Ad) -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+    <div class="ad-container bg-slate-200/60 dark:bg-slate-800/60 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-2 text-center min-h-[90px] flex flex-col items-center justify-center overflow-hidden">
+      <span class="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Advertisement</span>
+      <!-- Google AdSense Code Slot -->
+      <ins class="adsbygoogle"
+           style="display:block; min-width:300px; max-width:728px; width:100%; height:90px;"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="1234567890"
+           data-ad-format="horizontal"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  </section>
+
+  <!-- Main Application Dashboard -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6 flex-grow w-full">
+    
+    <!-- Temporary Email Generator Box -->
+    <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 p-6 md:p-8 mb-8 transition-all">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-2">
+          Your Temporary Disposable Email
+        </h1>
+        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base mb-6">
+          Use this temporary email address to sign up on websites without giving away your personal identity.
+        </p>
+
+        <!-- Mail Input display & Actions -->
+        <div class="relative flex flex-col sm:flex-row items-stretch gap-3 bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div class="relative flex-grow flex items-center min-w-0">
+            <i class="fa-regular fa-envelope text-slate-400 ml-3 mr-2 text-lg"></i>
+            <input type="text" id="emailAddressInput" readonly value="Generating your email..." 
+                   class="w-full bg-transparent font-mono text-base sm:text-lg font-semibold text-brand-600 dark:text-brand-500 focus:outline-none truncate py-2 pr-2">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <!-- Copy Email Button -->
+            <button id="copyEmailBtn" class="flex-1 sm:flex-none px-4 py-3 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-medium rounded-lg shadow-md shadow-brand-500/20 transition flex items-center justify-center gap-2">
+              <i class="fa-regular fa-copy"></i>
+              <span>Copy</span>
+            </button>
+
+            <!-- Refresh Mailbox Button -->
+            <button id="refreshMailBtn" title="Refresh Inbox" class="px-3.5 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium rounded-lg transition flex items-center justify-center">
+              <i id="refreshIcon" class="fa-solid fa-arrows-rotate"></i>
+            </button>
+
+            <!-- New Email Button -->
+            <button id="changeEmailBtn" title="Generate New Address" class="px-3.5 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium rounded-lg transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-plus"></i>
+              <span class="hidden md:inline text-sm">New</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Polling / Timer indicator -->
+        <div class="mt-4 flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1 gap-2">
+          <div class="flex items-center gap-2">
+            <span id="syncPulse" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span id="statusText">Auto-checking inbox every 5s</span>
+          </div>
+          <div>
+            <span>Expires in: <strong class="font-mono text-slate-700 dark:text-slate-300">24 Hours</strong></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content & Sidebar Grid (Split View for Ads & Mailbox) -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <!-- Mailbox & Message Container (Left 3 Columns) -->
+      <div class="lg:col-span-3 space-y-6">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden min-h-[420px] flex flex-col">
+          
+          <!-- Inbox Header Toolbar -->
+          <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+            <div class="flex items-center gap-3">
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-inbox text-brand-600 dark:text-brand-500"></i> Inbox
+              </h2>
+              <span id="messageCountBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-100 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300">
+                0 Messages
+              </span>
+            </div>
+            
+            <button id="deleteAccountBtn" class="text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 hover:underline flex items-center gap-1.5 transition">
+              <i class="fa-regular fa-trash-can"></i> Delete Address
+            </button>
+          </div>
+
+          <!-- Inbox Message List Container -->
+          <div id="inboxListContainer" class="flex-grow divide-y divide-slate-100 dark:divide-slate-700/60 overflow-y-auto custom-scrollbar max-h-[550px]">
+            
+            <!-- Empty state loader / Empty Inbox Message -->
+            <div id="emptyInboxView" class="p-12 text-center flex flex-col items-center justify-center h-full min-h-[320px]">
+              <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-4 animate-bounce">
+                <i class="fa-regular fa-envelope-open text-2xl"></i>
+              </div>
+              <h3 class="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">Your inbox is empty</h3>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-4">
+                Waiting for incoming emails. Sent messages will automatically show up here.
+              </p>
+              <div class="inline-flex items-center gap-2 text-xs text-brand-600 dark:text-brand-400 font-medium">
+                <i class="fa-solid fa-spinner fa-spin"></i> Polling server for updates...
+              </div>
+            </div>
+
+            <!-- Message items generated via JS -->
+            <div id="messagesList" class="hidden"></div>
+          </div>
+        </div>
+
+        <!-- In-Content Ad Space -->
+        <div class="ad-container bg-slate-200/60 dark:bg-slate-800/60 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-2 text-center min-h-[120px] flex flex-col items-center justify-center overflow-hidden">
+          <span class="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Sponsored Content</span>
+          <ins class="adsbygoogle"
+               style="display:block; width:100%; height:100px;"
+               data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+               data-ad-slot="9876543210"
+               data-ad-format="fluid"
+               data-ad-layout-key="-fb+5w+4e-db+86"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
+
+      <!-- Right Sidebar (Ad Space & Info Widget) -->
+      <aside class="space-y-6">
+        <!-- Sidebar Ad Slot (300x250 Medium Rectangle) -->
+        <div class="ad-container bg-slate-200/60 dark:bg-slate-800/60 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-2 text-center min-h-[260px] flex flex-col items-center justify-center overflow-hidden">
+          <span class="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Advertisement</span>
+          <ins class="adsbygoogle"
+               style="display:inline-block; width:300px; height:250px"
+               data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+               data-ad-slot="5432109876"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+
+        <!-- Privacy Features Widget -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-brand-600 dark:text-brand-500"></i> Multi Mail Guarantee
+          </h3>
+          <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span>No registration or personal details needed.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span>Automatic message self-destruction.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span>Keeps your personal inbox completely spam-free.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+              <span>Encrypted connections using Mail.tm protocol.</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- SEO Informational & Content Section -->
+    <article class="mt-16 bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-10 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-8">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+          What is Multi Mail Disposable Temporary Email?
+        </h2>
+        <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+          <strong>Multi Mail</strong> is a free, secure, and instant temporary email service powered by the robust Mail.tm API. It allows you to create throwaway email addresses to receive confirmation messages, activation links, or test emails without disclosing your actual email address. Protecting your primary address prevents spam, targeted ads, and malicious data harvesting.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700">
+          <div class="w-10 h-10 rounded-lg bg-brand-100 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold mb-3">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-1">100% Anonymous</h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            No registration, phone numbers, or personal identifying data required to generate throwaway mailboxes.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700">
+          <div class="w-10 h-10 rounded-lg bg-brand-100 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold mb-3">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-1">Instant Delivery</h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            Auto-refresh polling checks the inbox instantly as soon as messages arrive on the Mail.tm server.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700">
+          <div class="w-10 h-10 rounded-lg bg-brand-100 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold mb-3">
+            <i class="fa-solid fa-trash-arrow-up"></i>
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-1">Auto Destruction</h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            Messages automatically delete after a brief period, ensuring no persistent digital footprint.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ Accordion -->
+      <div>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          Frequently Asked Questions (FAQ)
+        </h2>
+        <div class="space-y-3">
+          <details class="group bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-200/60 dark:border-slate-700 transition">
+            <summary class="font-semibold text-slate-800 dark:text-slate-200 cursor-pointer list-none flex justify-between items-center text-sm sm:text-base">
+              <span>Is Multi Mail free to use?</span>
+              <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+            </summary>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Yes, Multi Mail is completely free with no hidden fees or premium subscriptions.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-200/60 dark:border-slate-700 transition">
+            <summary class="font-semibold text-slate-800 dark:text-slate-200 cursor-pointer list-none flex justify-between items-center text-sm sm:text-base">
+              <span>Can I send emails from this temporary address?</span>
+              <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+            </summary>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              To prevent abuse and spam, sending emails is disabled. Multi Mail is strictly designed for receiving emails.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-200/60 dark:border-slate-700 transition">
+            <summary class="font-semibold text-slate-800 dark:text-slate-200 cursor-pointer list-none flex justify-between items-center text-sm sm:text-base">
+              <span>How long does my temporary email address last?</span>
+              <span class="transition group-open:rotate-180"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+            </summary>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Your temporary address remains active as long as your browser session is preserved or until you click "New" to generate a fresh address.
+            </p>
+          </details>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- Detailed Email View Modal -->
+  <div id="emailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh] overflow-hidden transform transition-all">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex items-start justify-between bg-slate-50 dark:bg-slate-800/80">
+        <div class="min-w-0 pr-4">
+          <h3 id="modalSubject" class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate">
+            Subject Loading...
+          </h3>
+          <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <span>From: <strong id="modalFrom" class="text-slate-700 dark:text-slate-300 font-mono">sender@domain.com</strong></span>
+            <span>•</span>
+            <span id="modalTime">Just now</span>
+          </div>
+        </div>
+        <button id="closeModalBtn" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-4 sm:p-6 flex-grow overflow-y-auto custom-scrollbar">
+        <!-- Rendered HTML/Text Content -->
+        <div id="modalBody" class="prose dark:prose-invert max-w-none text-sm text-slate-800 dark:text-slate-200 min-h-[150px] leading-relaxed">
+          <div class="flex items-center justify-center py-8 text-slate-400">
+            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Fetching message details...
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 flex items-center justify-between">
+        <button id="deleteSingleMsgBtn" class="px-3.5 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition flex items-center gap-1.5">
+          <i class="fa-regular fa-trash-can"></i> Delete Email
+        </button>
+        <button id="closeModalFooterBtn" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-medium transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Alert -->
+  <div id="toast" class="fixed bottom-16 sm:bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-xs sm:text-sm font-medium">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600"></i>
+    <span id="toastMsg">Action successful</span>
+  </div>
+
+  <!-- Sticky Bottom Footer Ad Slot -->
+  <div class="sticky bottom-0 z-20 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 p-1">
+    <div class="max-w-7xl mx-auto flex items-center justify-center">
+      <div class="ad-container text-center w-full min-h-[50px] flex items-center justify-center">
+        <ins class="adsbygoogle"
+             style="display:block; width:100%; height:50px;"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="1122334455"
+             data-ad-format="horizontal"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+      <p>&copy; 2026 Multi Mail. Powered by Mail.tm API. All rights reserved.</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:underline">Privacy Policy</a>
+        <a href="#" class="hover:underline">Terms of Service</a>
+        <a href="#" class="hover:underline">API Docs</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript Logic -->
+  <script>
+    // Configuration & State Management
+    const API_BASE = 'https://api.mail.tm';
+    let currentAccount = JSON.parse(localStorage.getItem('multimail_account')) || null;
+    let messagesCache = [];
+    let activeMessageId = null;
+    let pollInterval = null;
+
+    // DOM Elements
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const emailInput = document.getElementById('emailAddressInput');
+    const copyBtn = document.getElementById('copyEmailBtn');
+    const refreshBtn = document.getElementById('refreshMailBtn');
+    const refreshIcon = document.getElementById('refreshIcon');
+    const changeEmailBtn = document.getElementById('changeEmailBtn');
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    const inboxListContainer = document.getElementById('inboxListContainer');
+    const emptyInboxView = document.getElementById('emptyInboxView');
+    const messagesList = document.getElementById('messagesList');
+    const messageCountBadge = document.getElementById('messageCountBadge');
+    const statusText = document.getElementById('statusText');
+    const syncPulse = document.getElementById('syncPulse');
+
+    // Modal DOM Elements
+    const emailModal = document.getElementById('emailModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const closeModalFooterBtn = document.getElementById('closeModalFooterBtn');
+    const modalSubject = document.getElementById('modalSubject');
+    const modalFrom = document.getElementById('modalFrom');
+    const modalTime = document.getElementById('modalTime');
+    const modalBody = document.getElementById('modalBody');
+    const deleteSingleMsgBtn = document.getElementById('deleteSingleMsgBtn');
+
+    // Toast Function
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.textContent = message;
+      if (isError) {
+        toastIcon.className = "fa-solid fa-circle-xmark text-rose-500";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600";
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    // Dark/Light Theme Switching Logic
+    function initTheme() {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        themeIcon.className = 'fa-solid fa-sun text-lg';
+      } else {
+        document.documentElement.classList.remove('dark');
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      }
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.className = 'fa-solid fa-sun text-lg';
+      }
+    });
+
+    // Helper: Random string generator
+    function generateRandomString(length = 10) {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+
+    // API: Fetch available domains
+    async function getDomain() {
+      try {
+        const response = await fetch(`${API_BASE}/domains`);
+        if (!response.ok) throw new Error('Failed to fetch domains');
+        const data = await response.json();
+        const activeDomains = data['hydra:member'].filter(d => d.isAvailable);
+        if (activeDomains.length === 0) throw new Error('No active domains available');
+        return activeDomains[0].domain;
+      } catch (err) {
+        console.error(err);
+        throw err;
+      }
+    }
+
+    // API: Create new account & get JWT token
+    async function createNewAccount() {
+      try {
+        emailInput.value = "Creating address...";
+        statusText.textContent = "Requesting new domain...";
+
+        const domain = await getDomain();
+        const username = generateRandomString(10);
+        const address = `${username}@${domain}`;
+        const password = generateRandomString(12);
+
+        // 1. Create account
+        const accountRes = await fetch(`${API_BASE}/accounts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address, password })
+        });
+
+        if (!accountRes.ok) throw new Error('Account creation failed');
+        const accountData = await accountRes.json();
+
+        // 2. Get Token
+        const tokenRes = await fetch(`${API_BASE}/token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address, password })
+        });
+
+        if (!tokenRes.ok) throw new Error('Authentication failed');
+        const tokenData = await tokenRes.json();
+
+        currentAccount = {
+          id: accountData.id,
+          address: address,
+          password: password,
+          token: tokenData.token
+        };
+
+        localStorage.setItem('multimail_account', JSON.stringify(currentAccount));
+        emailInput.value = currentAccount.address;
+        showToast('New email address generated!');
+        
+        fetchMessages();
+      } catch (err) {
+        console.error(err);
+        emailInput.value = "Error generating mail";
+        showToast('Failed to create mail address. Retrying...', true);
+      }
+    }
+
+    // API: Fetch Messages
+    async function fetchMessages(showLoading = false) {
+      if (!currentAccount || !currentAccount.token) return;
+
+      if (showLoading) {
+        refreshIcon.classList.add('fa-spin');
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/messages`, {
+          headers: {
+            'Authorization': `Bearer ${currentAccount.token}`
+          }
+        });
+
+        if (res.status === 401) {
+          // Token expired, recreate session
+          await createNewAccount();
+          return;
+        }
+
+        if (!res.ok) throw new Error('Failed to fetch messages');
+
+        const data = await res.json();
+        const messages = data['hydra:member'] || [];
+        messagesCache = messages;
+        renderMessages(messages);
+
+        syncPulse.classList.remove('bg-rose-500');
+        syncPulse.classList.add('bg-emerald-500');
+        statusText.textContent = `Last synced: ${new Date().toLocaleTimeString()}`;
+      } catch (err) {
+        console.error(err);
+        syncPulse.classList.remove('bg-emerald-500');
+        syncPulse.classList.add('bg-rose-500');
+        statusText.textContent = "Sync failed. Retrying...";
+      } finally {
+        if (showLoading) {
+          setTimeout(() => refreshIcon.classList.remove('fa-spin'), 500);
+        }
+      }
+    }
+
+    // Render inbox message items
+    function renderMessages(messages) {
+      messageCountBadge.textContent = `${messages.length} Message${messages.length === 1 ? '' : 's'}`;
+
+      if (messages.length === 0) {
+        emptyInboxView.classList.remove('hidden');
+        messagesList.classList.add('hidden');
+        messagesList.innerHTML = '';
+        return;
+      }
+
+      emptyInboxView.classList.add('hidden');
+      messagesList.classList.remove('hidden');
+
+      messagesList.innerHTML = messages.map(msg => {
+        const dateStr = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const senderName = msg.from.name || msg.from.address;
+        const unreadClass = !msg.seen ? 'font-bold bg-brand-50/40 dark:bg-brand-950/20' : '';
+
+        return `
+          <div onclick="openMessageModal('${msg.id}')" class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition flex items-center justify-between gap-4 ${unreadClass}">
+            <div class="min-w-0 flex-grow">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-semibold text-slate-900 dark:text-white truncate max-w-[200px]">
+                  ${escapeHTML(senderName)}
+                </span>
+                <span class="text-[11px] text-slate-400 dark:text-slate-500 shrink-0">${dateStr}</span>
+              </div>
+              <h4 class="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">${escapeHTML(msg.subject || '(No Subject)')}</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">${escapeHTML(msg.intro || '')}</p>
+            </div>
+            <div class="shrink-0 text-slate-400">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Escape HTML strings for safety
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
+    // Open Message Details Modal
+    async function openMessageModal(messageId) {
+      activeMessageId = messageId;
+      emailModal.classList.remove('hidden');
+      
+      modalSubject.textContent = "Loading email...";
+      modalFrom.textContent = "...";
+      modalTime.textContent = "...";
+      modalBody.innerHTML = `<div class="flex items-center justify-center py-12 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading full message...</div>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/messages/${messageId}`, {
+          headers: { 'Authorization': `Bearer ${currentAccount.token}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch message body');
+
+        const msgData = await res.json();
+
+        modalSubject.textContent = msgData.subject || '(No Subject)';
+        modalFrom.textContent = msgData.from.address;
+        modalTime.textContent = new Date(msgData.createdAt).toLocaleString();
+
+        if (msgData.html && msgData.html.length > 0) {
+          // Create safe iframe to isolate email HTML styling
+          const iframe = document.createElement('iframe');
+          iframe.className = "w-full min-h-[300px] border-0 rounded-lg bg-white";
+          modalBody.innerHTML = '';
+          modalBody.appendChild(iframe);
+          
+          const doc = iframe.contentWindow.document;
+          doc.open();
+          doc.write(msgData.html[0]);
+          doc.close();
+        } else {
+          modalBody.innerHTML = `<pre class="whitespace-pre-wrap font-sans text-sm">${escapeHTML(msgData.text || 'No text content.')}</pre>`;
+        }
+
+        // Refresh list to update seen status
+        fetchMessages();
+      } catch (err) {
+        console.error(err);
+        modalBody.innerHTML = `<p class="text-rose-500 text-sm">Failed to load email message. Please try again.</p>`;
+      }
+    }
+
+    // Delete single message from modal
+    deleteSingleMsgBtn.addEventListener('click', async () => {
+      if (!activeMessageId || !currentAccount) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/messages/${activeMessageId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${currentAccount.token}` }
+        });
+
+        if (!res.ok) throw new Error('Delete failed');
+
+        emailModal.classList.add('hidden');
+        showToast('Message deleted');
+        fetchMessages();
+      } catch (err) {
+        showToast('Failed to delete message', true);
+      }
+    });
+
+    // Close Modal Event listeners
+    closeModalBtn.addEventListener('click', () => emailModal.classList.add('hidden'));
+    closeModalFooterBtn.addEventListener('click', () => emailModal.classList.add('hidden'));
+    emailModal.addEventListener('click', (e) => {
+      if (e.target === emailModal) emailModal.classList.add('hidden');
+    });
+
+    // Copy to clipboard with legacy fallback support
+    copyBtn.addEventListener('click', () => {
+      if (!emailInput.value || emailInput.value.includes('...')) return;
+
+      emailInput.select();
+      document.execCommand('copy');
+      showToast('Email address copied to clipboard!');
+    });
+
+    // Manual Refresh
+    refreshBtn.addEventListener('click', () => {
+      fetchMessages(true);
+    });
+
+    // Generate New Email
+    changeEmailBtn.addEventListener('click', () => {
+      createNewAccount();
+    });
+
+    // Delete current address
+    deleteAccountBtn.addEventListener('click', async () => {
+      if (!currentAccount) return;
+      if (confirm('Are you sure you want to delete this temporary email address?')) {
+        try {
+          await fetch(`${API_BASE}/accounts/${currentAccount.id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${currentAccount.token}` }
+          });
+        } catch (e) {}
+        
+        localStorage.removeItem('multimail_account');
+        currentAccount = null;
+        createNewAccount();
+      }
+    });
+
+    // Initialize Page logic
+    window.onload = function () {
+      initTheme();
+
+      if (currentAccount && currentAccount.address && currentAccount.token) {
+        emailInput.value = currentAccount.address;
+        fetchMessages(true);
+      } else {
+        createNewAccount();
+      }
+
+      // Start automatic polling interval every 5 seconds
+      pollInterval = setInterval(() => {
+        fetchMessages(false);
+      }, 5000);
+    };
+  </script>
+</body>
+</html>
